@@ -25,8 +25,11 @@ d'images extraites (`docs/inspection/` est dans `.gitignore`). Seules des donné
 
 | Champ | Valeur |
 |---|---|
-| Outil | MediaPipe Pose Landmarker (Google), 33 points |
-| Licence | Apache 2.0 (bibliothèque et modèle). La provenance exacte du fichier `.task` sera ajoutée en phase A |
+| Outil | MediaPipe Pose Landmarker (Google), modèle BlazePose GHUM 3D *full*, 33 points |
+| Bibliothèque | `mediapipe==1.1.0` (PyPI), Apache 2.0 |
+| Fichier modèle | `pose_landmarker_full.task`, téléchargé depuis https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_full/float16/latest/pose_landmarker_full.task (SHA-256 `4eaa5eb7a98365221087693fcc286334cf0858e2eb6e15b506aa4a7ecdcec4ad`, 12/10/2026). Non versionné |
+| Licence du modèle | Apache 2.0, d'après la fiche modèle : https://storage.googleapis.com/mediapipe-assets/Model%20Card%20BlazePose%20GHUM%203D.pdf |
+| Date de consultation | 12/10/2026 |
 
 ## 3. Vidéos personnelles (`data/own/`)
 

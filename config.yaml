@@ -27,13 +27,109 @@ dataset:
   accessed: "2026-10-12"
 
 # ---------------------------------------------------------------------
+# Paramètres techniques du pipeline (PAS des critères de posture).
+# Choix d'ingénierie, documentés dans docs/SOURCES.md section "Paramètres techniques".
+# ---------------------------------------------------------------------
+pose:
+  model_path: "models/pose_landmarker_full.task"
+  model_url: "https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_full/float16/latest/pose_landmarker_full.task"
+  max_people: 3            # personnes détectées max ; on garde la plus grande (la plus proche)
+  min_visibility: 0.5      # en dessous, le point est considéré absent (NaN)
+  max_gap_frames: 3        # trous comblés par interpolation (3 images = 0,2 s à 15 fps)
+  smooth_window: 7         # lissage Savitzky-Golay (7 images = 0,47 s à 15 fps)
+  smooth_polyorder: 2
+
+reps:
+  min_travel: 0.3          # descente minimale de la hanche, en longueurs de cuisse
+  min_interval_s: 0.8      # temps minimal entre deux points bas
+  edge_fraction: 0.1       # début/fin du mouvement = à 10 % de l'amplitude depuis le haut
+
+# ---------------------------------------------------------------------
 # Exercices. Architecture prévue pour en ajouter d'autres (non fait).
-# Chaque seuil a : value, source (clé de docs/SOURCES.md) et status.
-#   status: "sourcé"                -> valeur tirée d'une source vérifiée
-#   status: "à valider par un expert" -> pas de source trouvée / choix d'ingénierie
-# Les seuils seront renseignés en PHASE A, après l'inspection des vidéos "bad".
+#
+# Chaque règle :
+#   indicator : colonne calculée par src/angles.py
+#   window    : "rep" (toute la répétition) ou "bottom_half" (moitié basse du mouvement)
+#   agg       : max ou min de l'indicateur sur la fenêtre
+#   op, value : erreur si  agg(indicateur) <op> value
+#   views     : vues où l'indicateur est interprétable ; "reduced" = fiabilité réduite (signalé)
+#   source    : clé dans docs/SOURCES.md
+#   status    : "sourcé" | "critère sourcé, seuil à valider par un expert" | "à valider par un expert"
 # ---------------------------------------------------------------------
 exercises:
   squat:
     label: "Squat"
-    thresholds: {}
+    # Myer et al. 2014 : un défaut est retenu s'il apparaît sur 2 répétitions ou plus.
+    min_reps_for_video_error: 2
+    min_reps_source: "myer2014"
+    rules:
+      depth:
+        label: "Profondeur insuffisante"
+        indicator: depth
+        window: rep
+        agg: max
+        op: "<"
+        value: 0.0
+        views: {valid: [side], reduced: []}
+        source: myer2014
+        status: "sourcé"
+        message: "Au point bas, la hanche reste au-dessus du genou. Critère : articulation de la hanche au moins au niveau du genou (cuisses au moins parallèles au sol)."
+      heel_rise:
+        label: "Talons décollés"
+        indicator: heel_rise
+        window: rep
+        agg: max
+        op: ">"
+        value: 0.15
+        views: {valid: [side], reduced: []}
+        source: myer2014
+        status: "critère sourcé, seuil à valider par un expert"
+        message: "Le talon se soulève pendant la répétition. Critère : le pied entier reste en contact avec le sol. La tolérance (15 % de la longueur du pied) absorbe le bruit de mesure et n'est pas sourcée."
+      trunk_vs_tibia:
+        label: "Tronc trop penché par rapport au tibia"
+        indicator: trunk_minus_tibia
+        window: bottom_half
+        agg: max
+        op: ">"
+        value: 15.0
+        views: {valid: [side], reduced: []}
+        source: myer2014
+        status: "critère sourcé, seuil à valider par un expert"
+        message: "Le tronc est nettement plus penché que le tibia. Critère : tronc parallèle au tibia. La tolérance de 15° n'est pas sourcée."
+      head_position:
+        label: "Tête / cou penchés vers l'avant"
+        indicator: neck_lean
+        window: bottom_half
+        agg: max
+        op: ">"
+        value: 30.0
+        views: {valid: [side], reduced: []}
+        source: myer2014
+        status: "critère sourcé, seuil à valider par un expert"
+        message: "Le cou s'éloigne de la verticale (tête baissée ou projetée vers l'avant). Critère : ligne du cou perpendiculaire au sol. La tolérance de 30° n'est pas sourcée."
+      knee_valgus:
+        label: "Genoux vers l'intérieur (valgus)"
+        indicator: knee_ankle_ratio
+        window: bottom_half
+        agg: min
+        op: "<"
+        value: 1.0
+        views: {valid: [front], reduced: [diagonal]}
+        source: myer2014
+        status: "critère sourcé, seuil à valider par un expert"
+        message: "Les genoux se rapprochent plus que les chevilles. Critère : le genou ne doit pas passer à l'intérieur de la cheville. Approximation : centres genou/cheville (ratio de Mizner 2012 < 1)."
+      hip_shift:
+        label: "Bassin qui bascule (asymétrie)"
+        indicator: hip_tilt
+        window: bottom_half
+        agg: max
+        op: ">"
+        value: 10.0
+        views: {valid: [front], reduced: [diagonal]}
+        source: myer2014
+        status: "critère sourcé, seuil à valider par un expert"
+        message: "La ligne des hanches n'est pas horizontale vue de face. Critère : hanches parallèles au sol. La tolérance de 10° n'est pas sourcée."
+    # Indicateurs affichés sans règle (pas de seuil fiable)
+    info_only:
+      tempo: "Rapport descente/remontée affiché, sans règle : le critère de tempo de Myer et al. (2014) est formulé de façon ambiguë, et 15 fps limite la précision."
+      knee_asymmetry: "Différence d'angle de genou gauche/droite (projection 2D), affichée sans seuil."
