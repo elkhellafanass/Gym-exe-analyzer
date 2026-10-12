@@ -1,0 +1,9 @@
+rule,view,view_status,flag_rate_good,flag_rate_bad,n_good,n_bad,n_present,n_absent,detection,detection_ci_low,detection_ci_high,false_alert,false_alert_ci_low,false_alert_ci_high,evaluated_against
+depth,side,valid,0.920,1.000,25,25,21.000,29.000,0.952,0.852,1.000,0.966,0.897,1.000,"annotation en aveugle de l'auteur (non-expert, 50 vidéos)"
+heel_rise,side,valid,0.800,0.760,25,25,12.000,38.000,0.750,0.400,1.000,0.789,0.667,0.895,"annotation en aveugle de l'auteur (non-expert, 50 vidéos)"
+trunk_vs_tibia,side,valid,0.600,0.600,25,25,29.000,21.000,0.621,0.407,0.808,0.571,0.308,0.812,"annotation en aveugle de l'auteur (non-expert, 50 vidéos)"
+head_position,side,valid,0.240,0.160,25,25,42.000,8.000,0.238,0.100,0.390,0.000,0.000,0.000,"annotation en aveugle de l'auteur (non-expert, 50 vidéos)"
+knee_valgus,front,valid,0.160,0.280,25,25,,,,,,,,,fiabilité non évaluée contre annotation
+knee_valgus,diagonal,reduced,0.250,0.480,24,25,,,,,,,,,fiabilité non évaluée contre annotation
+hip_shift,front,valid,0.000,0.160,25,25,,,,,,,,,fiabilité non évaluée contre annotation
+hip_shift,diagonal,reduced,0.750,0.840,24,25,,,,,,,,,fiabilité non évaluée contre annotation

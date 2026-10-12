@@ -1,0 +1,13 @@
+annotation,quality,n,present_any,present_most
+depth,good,25,7,2
+depth,bad,25,14,10
+heel_rise,good,25,3,1
+heel_rise,bad,25,9,6
+trunk_lean,good,25,10,4
+trunk_lean,bad,25,19,13
+head,good,25,20,9
+head,bad,25,22,18
+knees_forward,good,25,11,5
+knees_forward,bad,25,20,13
+other,good,25,2,1
+other,bad,25,0,0

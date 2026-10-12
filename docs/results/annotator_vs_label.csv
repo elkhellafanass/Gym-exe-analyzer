@@ -1,0 +1,10 @@
+convention,metric,estimate,ci_low,ci_high,n_boot_valid
+incertain exclus,kappa,0.191,0.000,0.444,2000
+incertain exclus,accord_brut,0.703,0.614,0.818,2000
+incertain exclus,n,37.000,31.000,43.000,2000
+incertain = désaccord,kappa,0.040,-0.080,0.160,2000
+incertain = désaccord,accord_brut,0.520,0.460,0.580,2000
+incertain = désaccord,n,50.000,50.000,50.000,2000
+incertain = accord,kappa,0.560,0.360,0.760,2000
+incertain = accord,accord_brut,0.780,0.680,0.880,2000
+incertain = accord,n,50.000,50.000,50.000,2000

@@ -1,0 +1,169 @@
+method,view,n,tp,fp,fn,tn,metric,estimate,ci_low,ci_high
+Régression logistique,toutes,149,43.000,26.000,32.000,48.000,accuracy,0.611,0.547,0.673
+Régression logistique,toutes,149,43.000,26.000,32.000,48.000,precision,0.623,0.553,0.709
+Régression logistique,toutes,149,43.000,26.000,32.000,48.000,recall,0.573,0.467,0.680
+Régression logistique,toutes,149,43.000,26.000,32.000,48.000,specificity,0.649,0.520,0.770
+Régression logistique,toutes,149,43.000,26.000,32.000,48.000,f1,0.597,0.519,0.667
+Régression logistique,toutes,149,43.000,26.000,32.000,48.000,balanced_accuracy,0.611,0.548,0.673
+Régression logistique,toutes,149,43.000,26.000,32.000,48.000,auc,0.600,0.537,0.675
+Régression logistique,toutes,149,43.000,26.000,32.000,48.000,brier,0.251,0.229,0.274
+Forêt aléatoire,toutes,149,41.000,39.000,34.000,35.000,accuracy,0.510,0.446,0.571
+Forêt aléatoire,toutes,149,41.000,39.000,34.000,35.000,precision,0.512,0.453,0.570
+Forêt aléatoire,toutes,149,41.000,39.000,34.000,35.000,recall,0.547,0.427,0.667
+Forêt aléatoire,toutes,149,41.000,39.000,34.000,35.000,specificity,0.473,0.360,0.581
+Forêt aléatoire,toutes,149,41.000,39.000,34.000,35.000,f1,0.529,0.447,0.599
+Forêt aléatoire,toutes,149,41.000,39.000,34.000,35.000,balanced_accuracy,0.510,0.446,0.571
+Forêt aléatoire,toutes,149,41.000,39.000,34.000,35.000,auc,0.553,0.482,0.631
+Forêt aléatoire,toutes,149,41.000,39.000,34.000,35.000,brier,0.263,0.243,0.284
+Détecteur à seuils (règles),toutes,149,57.000,47.000,18.000,27.000,accuracy,0.564,0.513,0.617
+Détecteur à seuils (règles),toutes,149,57.000,47.000,18.000,27.000,precision,0.548,0.510,0.589
+Détecteur à seuils (règles),toutes,149,57.000,47.000,18.000,27.000,recall,0.760,0.693,0.827
+Détecteur à seuils (règles),toutes,149,57.000,47.000,18.000,27.000,specificity,0.365,0.284,0.446
+Détecteur à seuils (règles),toutes,149,57.000,47.000,18.000,27.000,f1,0.637,0.592,0.682
+Détecteur à seuils (règles),toutes,149,57.000,47.000,18.000,27.000,balanced_accuracy,0.562,0.510,0.616
+Trivial : toujours bad,toutes,149,75.000,74.000,0.000,0.000,accuracy,0.503,0.500,0.510
+Trivial : toujours bad,toutes,149,75.000,74.000,0.000,0.000,precision,0.503,0.500,0.510
+Trivial : toujours bad,toutes,149,75.000,74.000,0.000,0.000,recall,1.000,1.000,1.000
+Trivial : toujours bad,toutes,149,75.000,74.000,0.000,0.000,specificity,0.000,0.000,0.000
+Trivial : toujours bad,toutes,149,75.000,74.000,0.000,0.000,f1,0.670,0.667,0.676
+Trivial : toujours bad,toutes,149,75.000,74.000,0.000,0.000,balanced_accuracy,0.500,0.500,0.500
+Trivial : toujours good,toutes,149,0.000,0.000,75.000,74.000,accuracy,0.497,0.490,0.500
+Trivial : toujours good,toutes,149,0.000,0.000,75.000,74.000,precision,,,
+Trivial : toujours good,toutes,149,0.000,0.000,75.000,74.000,recall,0.000,0.000,0.000
+Trivial : toujours good,toutes,149,0.000,0.000,75.000,74.000,specificity,1.000,1.000,1.000
+Trivial : toujours good,toutes,149,0.000,0.000,75.000,74.000,f1,0.000,0.000,0.000
+Trivial : toujours good,toutes,149,0.000,0.000,75.000,74.000,balanced_accuracy,0.500,0.500,0.500
+Hasard (pile ou face),toutes,149,,,,,accuracy,0.497,0.416,0.577
+Hasard (pile ou face),toutes,149,,,,,precision,0.500,0.421,0.585
+Hasard (pile ou face),toutes,149,,,,,recall,0.493,0.387,0.613
+Hasard (pile ou face),toutes,149,,,,,specificity,0.500,0.392,0.608
+Hasard (pile ou face),toutes,149,,,,,f1,0.500,0.406,0.588
+Hasard (pile ou face),toutes,149,,,,,balanced_accuracy,0.497,0.416,0.578
+Hasard (pile ou face),toutes,149,,,,,auc,0.500,,
+"Probabilité constante 0,5",toutes,149,,,,,brier,0.250,,
+Régression logistique,side,50,15.000,11.000,10.000,14.000,accuracy,0.580,0.480,0.680
+Régression logistique,side,50,15.000,11.000,10.000,14.000,precision,0.577,0.485,0.682
+Régression logistique,side,50,15.000,11.000,10.000,14.000,recall,0.600,0.400,0.800
+Régression logistique,side,50,15.000,11.000,10.000,14.000,specificity,0.560,0.360,0.760
+Régression logistique,side,50,15.000,11.000,10.000,14.000,f1,0.588,0.465,0.688
+Régression logistique,side,50,15.000,11.000,10.000,14.000,balanced_accuracy,0.580,0.480,0.680
+Régression logistique,side,50,15.000,11.000,10.000,14.000,auc,0.596,0.495,0.702
+Régression logistique,side,50,15.000,11.000,10.000,14.000,brier,0.254,0.222,0.291
+Forêt aléatoire,side,50,11.000,13.000,14.000,12.000,accuracy,0.460,0.340,0.580
+Forêt aléatoire,side,50,11.000,13.000,14.000,12.000,precision,0.458,0.318,0.583
+Forêt aléatoire,side,50,11.000,13.000,14.000,12.000,recall,0.440,0.240,0.640
+Forêt aléatoire,side,50,11.000,13.000,14.000,12.000,specificity,0.480,0.280,0.680
+Forêt aléatoire,side,50,11.000,13.000,14.000,12.000,f1,0.449,0.286,0.586
+Forêt aléatoire,side,50,11.000,13.000,14.000,12.000,balanced_accuracy,0.460,0.340,0.580
+Forêt aléatoire,side,50,11.000,13.000,14.000,12.000,auc,0.538,0.377,0.690
+Forêt aléatoire,side,50,11.000,13.000,14.000,12.000,brier,0.252,0.215,0.291
+Détecteur à seuils (règles),side,50,25.000,24.000,0.000,1.000,accuracy,0.520,0.500,0.560
+Détecteur à seuils (règles),side,50,25.000,24.000,0.000,1.000,precision,0.510,0.500,0.532
+Détecteur à seuils (règles),side,50,25.000,24.000,0.000,1.000,recall,1.000,1.000,1.000
+Détecteur à seuils (règles),side,50,25.000,24.000,0.000,1.000,specificity,0.040,0.000,0.120
+Détecteur à seuils (règles),side,50,25.000,24.000,0.000,1.000,f1,0.676,0.667,0.694
+Détecteur à seuils (règles),side,50,25.000,24.000,0.000,1.000,balanced_accuracy,0.520,0.500,0.560
+Trivial : toujours bad,side,50,25.000,25.000,0.000,0.000,accuracy,0.500,0.500,0.500
+Trivial : toujours bad,side,50,25.000,25.000,0.000,0.000,precision,0.500,0.500,0.500
+Trivial : toujours bad,side,50,25.000,25.000,0.000,0.000,recall,1.000,1.000,1.000
+Trivial : toujours bad,side,50,25.000,25.000,0.000,0.000,specificity,0.000,0.000,0.000
+Trivial : toujours bad,side,50,25.000,25.000,0.000,0.000,f1,0.667,0.667,0.667
+Trivial : toujours bad,side,50,25.000,25.000,0.000,0.000,balanced_accuracy,0.500,0.500,0.500
+Trivial : toujours good,side,50,0.000,0.000,25.000,25.000,accuracy,0.500,0.500,0.500
+Trivial : toujours good,side,50,0.000,0.000,25.000,25.000,precision,,,
+Trivial : toujours good,side,50,0.000,0.000,25.000,25.000,recall,0.000,0.000,0.000
+Trivial : toujours good,side,50,0.000,0.000,25.000,25.000,specificity,1.000,1.000,1.000
+Trivial : toujours good,side,50,0.000,0.000,25.000,25.000,f1,0.000,0.000,0.000
+Trivial : toujours good,side,50,0.000,0.000,25.000,25.000,balanced_accuracy,0.500,0.500,0.500
+Hasard (pile ou face),side,50,,,,,accuracy,0.500,0.360,0.640
+Hasard (pile ou face),side,50,,,,,precision,0.500,0.350,0.640
+Hasard (pile ou face),side,50,,,,,recall,0.520,0.320,0.720
+Hasard (pile ou face),side,50,,,,,specificity,0.480,0.320,0.680
+Hasard (pile ou face),side,50,,,,,f1,0.500,0.327,0.654
+Hasard (pile ou face),side,50,,,,,balanced_accuracy,0.500,0.360,0.640
+Hasard (pile ou face),side,50,,,,,auc,0.500,,
+"Probabilité constante 0,5",side,50,,,,,brier,0.250,,
+Régression logistique,front,50,13.000,6.000,12.000,19.000,accuracy,0.640,0.540,0.740
+Régression logistique,front,50,13.000,6.000,12.000,19.000,precision,0.684,0.550,0.857
+Régression logistique,front,50,13.000,6.000,12.000,19.000,recall,0.520,0.320,0.720
+Régression logistique,front,50,13.000,6.000,12.000,19.000,specificity,0.760,0.600,0.920
+Régression logistique,front,50,13.000,6.000,12.000,19.000,f1,0.591,0.421,0.735
+Régression logistique,front,50,13.000,6.000,12.000,19.000,balanced_accuracy,0.640,0.540,0.740
+Régression logistique,front,50,13.000,6.000,12.000,19.000,auc,0.608,0.490,0.744
+Régression logistique,front,50,13.000,6.000,12.000,19.000,brier,0.244,0.215,0.274
+Forêt aléatoire,front,50,15.000,12.000,10.000,13.000,accuracy,0.560,0.440,0.700
+Forêt aléatoire,front,50,15.000,12.000,10.000,13.000,precision,0.556,0.437,0.690
+Forêt aléatoire,front,50,15.000,12.000,10.000,13.000,recall,0.600,0.400,0.800
+Forêt aléatoire,front,50,15.000,12.000,10.000,13.000,specificity,0.520,0.320,0.720
+Forêt aléatoire,front,50,15.000,12.000,10.000,13.000,f1,0.577,0.436,0.706
+Forêt aléatoire,front,50,15.000,12.000,10.000,13.000,balanced_accuracy,0.560,0.440,0.700
+Forêt aléatoire,front,50,15.000,12.000,10.000,13.000,auc,0.563,0.434,0.707
+Forêt aléatoire,front,50,15.000,12.000,10.000,13.000,brier,0.268,0.225,0.310
+Détecteur à seuils (règles),front,50,9.000,4.000,16.000,21.000,accuracy,0.600,0.480,0.720
+Détecteur à seuils (règles),front,50,9.000,4.000,16.000,21.000,precision,0.692,0.455,0.917
+Détecteur à seuils (règles),front,50,9.000,4.000,16.000,21.000,recall,0.360,0.160,0.560
+Détecteur à seuils (règles),front,50,9.000,4.000,16.000,21.000,specificity,0.840,0.680,0.960
+Détecteur à seuils (règles),front,50,9.000,4.000,16.000,21.000,f1,0.474,0.258,0.650
+Détecteur à seuils (règles),front,50,9.000,4.000,16.000,21.000,balanced_accuracy,0.600,0.480,0.720
+Trivial : toujours bad,front,50,25.000,25.000,0.000,0.000,accuracy,0.500,0.500,0.500
+Trivial : toujours bad,front,50,25.000,25.000,0.000,0.000,precision,0.500,0.500,0.500
+Trivial : toujours bad,front,50,25.000,25.000,0.000,0.000,recall,1.000,1.000,1.000
+Trivial : toujours bad,front,50,25.000,25.000,0.000,0.000,specificity,0.000,0.000,0.000
+Trivial : toujours bad,front,50,25.000,25.000,0.000,0.000,f1,0.667,0.667,0.667
+Trivial : toujours bad,front,50,25.000,25.000,0.000,0.000,balanced_accuracy,0.500,0.500,0.500
+Trivial : toujours good,front,50,0.000,0.000,25.000,25.000,accuracy,0.500,0.500,0.500
+Trivial : toujours good,front,50,0.000,0.000,25.000,25.000,precision,,,
+Trivial : toujours good,front,50,0.000,0.000,25.000,25.000,recall,0.000,0.000,0.000
+Trivial : toujours good,front,50,0.000,0.000,25.000,25.000,specificity,1.000,1.000,1.000
+Trivial : toujours good,front,50,0.000,0.000,25.000,25.000,f1,0.000,0.000,0.000
+Trivial : toujours good,front,50,0.000,0.000,25.000,25.000,balanced_accuracy,0.500,0.500,0.500
+Hasard (pile ou face),front,50,,,,,accuracy,0.500,0.360,0.640
+Hasard (pile ou face),front,50,,,,,precision,0.500,0.350,0.640
+Hasard (pile ou face),front,50,,,,,recall,0.520,0.320,0.720
+Hasard (pile ou face),front,50,,,,,specificity,0.480,0.320,0.680
+Hasard (pile ou face),front,50,,,,,f1,0.500,0.327,0.654
+Hasard (pile ou face),front,50,,,,,balanced_accuracy,0.500,0.360,0.640
+Hasard (pile ou face),front,50,,,,,auc,0.500,,
+"Probabilité constante 0,5",front,50,,,,,brier,0.250,,
+Régression logistique,diagonal,49,15.000,9.000,10.000,15.000,accuracy,0.612,0.500,0.720
+Régression logistique,diagonal,49,15.000,9.000,10.000,15.000,precision,0.625,0.520,0.750
+Régression logistique,diagonal,49,15.000,9.000,10.000,15.000,recall,0.600,0.400,0.800
+Régression logistique,diagonal,49,15.000,9.000,10.000,15.000,specificity,0.625,0.440,0.800
+Régression logistique,diagonal,49,15.000,9.000,10.000,15.000,f1,0.612,0.476,0.721
+Régression logistique,diagonal,49,15.000,9.000,10.000,15.000,balanced_accuracy,0.613,0.501,0.720
+Régression logistique,diagonal,49,15.000,9.000,10.000,15.000,auc,0.598,0.488,0.714
+Régression logistique,diagonal,49,15.000,9.000,10.000,15.000,brier,0.254,0.224,0.285
+Forêt aléatoire,diagonal,49,15.000,14.000,10.000,10.000,accuracy,0.510,0.396,0.633
+Forêt aléatoire,diagonal,49,15.000,14.000,10.000,10.000,precision,0.517,0.419,0.625
+Forêt aléatoire,diagonal,49,15.000,14.000,10.000,10.000,recall,0.600,0.400,0.800
+Forêt aléatoire,diagonal,49,15.000,14.000,10.000,10.000,specificity,0.417,0.240,0.625
+Forêt aléatoire,diagonal,49,15.000,14.000,10.000,10.000,f1,0.556,0.419,0.667
+Forêt aléatoire,diagonal,49,15.000,14.000,10.000,10.000,balanced_accuracy,0.508,0.389,0.632
+Forêt aléatoire,diagonal,49,15.000,14.000,10.000,10.000,auc,0.534,0.397,0.678
+Forêt aléatoire,diagonal,49,15.000,14.000,10.000,10.000,brier,0.270,0.236,0.305
+Détecteur à seuils (règles),diagonal,49,23.000,19.000,2.000,5.000,accuracy,0.571,0.480,0.660
+Détecteur à seuils (règles),diagonal,49,23.000,19.000,2.000,5.000,precision,0.548,0.500,0.615
+Détecteur à seuils (règles),diagonal,49,23.000,19.000,2.000,5.000,recall,0.920,0.800,1.000
+Détecteur à seuils (règles),diagonal,49,23.000,19.000,2.000,5.000,specificity,0.208,0.048,0.375
+Détecteur à seuils (règles),diagonal,49,23.000,19.000,2.000,5.000,f1,0.687,0.623,0.746
+Détecteur à seuils (règles),diagonal,49,23.000,19.000,2.000,5.000,balanced_accuracy,0.564,0.480,0.656
+Trivial : toujours bad,diagonal,49,25.000,24.000,0.000,0.000,accuracy,0.510,0.500,0.532
+Trivial : toujours bad,diagonal,49,25.000,24.000,0.000,0.000,precision,0.510,0.500,0.532
+Trivial : toujours bad,diagonal,49,25.000,24.000,0.000,0.000,recall,1.000,1.000,1.000
+Trivial : toujours bad,diagonal,49,25.000,24.000,0.000,0.000,specificity,0.000,0.000,0.000
+Trivial : toujours bad,diagonal,49,25.000,24.000,0.000,0.000,f1,0.676,0.667,0.694
+Trivial : toujours bad,diagonal,49,25.000,24.000,0.000,0.000,balanced_accuracy,0.500,0.500,0.500
+Trivial : toujours good,diagonal,49,0.000,0.000,25.000,24.000,accuracy,0.490,0.468,0.500
+Trivial : toujours good,diagonal,49,0.000,0.000,25.000,24.000,precision,,,
+Trivial : toujours good,diagonal,49,0.000,0.000,25.000,24.000,recall,0.000,0.000,0.000
+Trivial : toujours good,diagonal,49,0.000,0.000,25.000,24.000,specificity,1.000,1.000,1.000
+Trivial : toujours good,diagonal,49,0.000,0.000,25.000,24.000,f1,0.000,0.000,0.000
+Trivial : toujours good,diagonal,49,0.000,0.000,25.000,24.000,balanced_accuracy,0.500,0.500,0.500
+Hasard (pile ou face),diagonal,49,,,,,accuracy,0.510,0.367,0.633
+Hasard (pile ou face),diagonal,49,,,,,precision,0.516,0.364,0.652
+Hasard (pile ou face),diagonal,49,,,,,recall,0.520,0.320,0.680
+Hasard (pile ou face),diagonal,49,,,,,specificity,0.500,0.292,0.708
+Hasard (pile ou face),diagonal,49,,,,,f1,0.510,0.340,0.654
+Hasard (pile ou face),diagonal,49,,,,,balanced_accuracy,0.508,0.366,0.635
+Hasard (pile ou face),diagonal,49,,,,,auc,0.500,,
+"Probabilité constante 0,5",diagonal,49,,,,,brier,0.250,,

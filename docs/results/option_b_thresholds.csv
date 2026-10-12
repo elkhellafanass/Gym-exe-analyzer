@@ -1,0 +1,9 @@
+view,rule,literature,median,min,max
+diagonal,hip_shift,10.0000,11.8455,11.6290,11.8455
+diagonal,knee_valgus,1.0000,1.0170,1.0129,1.0179
+front,hip_shift,10.0000,5.1998,4.5718,5.5246
+front,knee_valgus,1.0000,0.9762,0.9762,0.9848
+side,depth,0.0000,-0.4252,-0.4641,-0.4250
+side,head_position,30.0000,14.3559,14.3241,18.5830
+side,heel_rise,0.1500,0.3504,0.1475,0.3729
+side,trunk_vs_tibia,15.0000,18.9449,16.9605,18.9449

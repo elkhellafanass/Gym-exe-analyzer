@@ -1,0 +1,61 @@
+analysis,view,method,n,tp,fp,fn,tn,metric,estimate,ci_low,ci_high
+"option B (seuils calibrés sur le dataset, LOSO)",toutes,≥ 1 règle,149,63,43,12,31,precision,0.594,0.543,0.653
+"option B (seuils calibrés sur le dataset, LOSO)",toutes,≥ 1 règle,149,63,43,12,31,recall,0.840,0.760,0.907
+"option B (seuils calibrés sur le dataset, LOSO)",toutes,≥ 1 règle,149,63,43,12,31,specificity,0.419,0.311,0.527
+"option B (seuils calibrés sur le dataset, LOSO)",toutes,≥ 1 règle,149,63,43,12,31,f1,0.696,0.641,0.756
+"option B (seuils calibrés sur le dataset, LOSO)",toutes,≥ 1 règle,149,63,43,12,31,balanced_accuracy,0.629,0.557,0.707
+"option B (seuils calibrés sur le dataset, LOSO)",side,≥ 1 règle,50,25,22,0,3,precision,0.532,0.500,0.569
+"option B (seuils calibrés sur le dataset, LOSO)",side,≥ 1 règle,50,25,22,0,3,recall,1.000,1.000,1.000
+"option B (seuils calibrés sur le dataset, LOSO)",side,≥ 1 règle,50,25,22,0,3,specificity,0.120,0.000,0.241
+"option B (seuils calibrés sur le dataset, LOSO)",side,≥ 1 règle,50,25,22,0,3,f1,0.694,0.667,0.725
+"option B (seuils calibrés sur le dataset, LOSO)",side,≥ 1 règle,50,25,22,0,3,balanced_accuracy,0.560,0.500,0.620
+"option B (seuils calibrés sur le dataset, LOSO)",side,depth_flag,50,9,3,16,22,precision,0.750,0.500,1.000
+"option B (seuils calibrés sur le dataset, LOSO)",side,depth_flag,50,9,3,16,22,recall,0.360,0.200,0.560
+"option B (seuils calibrés sur le dataset, LOSO)",side,depth_flag,50,9,3,16,22,specificity,0.880,0.720,1.000
+"option B (seuils calibrés sur le dataset, LOSO)",side,depth_flag,50,9,3,16,22,f1,0.486,0.270,0.667
+"option B (seuils calibrés sur le dataset, LOSO)",side,depth_flag,50,9,3,16,22,balanced_accuracy,0.620,0.500,0.740
+"option B (seuils calibrés sur le dataset, LOSO)",side,heel_rise_flag,50,11,14,14,11,precision,0.440,0.345,0.522
+"option B (seuils calibrés sur le dataset, LOSO)",side,heel_rise_flag,50,11,14,14,11,recall,0.440,0.240,0.640
+"option B (seuils calibrés sur le dataset, LOSO)",side,heel_rise_flag,50,11,14,14,11,specificity,0.440,0.240,0.640
+"option B (seuils calibrés sur le dataset, LOSO)",side,heel_rise_flag,50,11,14,14,11,f1,0.440,0.293,0.552
+"option B (seuils calibrés sur le dataset, LOSO)",side,heel_rise_flag,50,11,14,14,11,balanced_accuracy,0.440,0.360,0.520
+"option B (seuils calibrés sur le dataset, LOSO)",side,trunk_vs_tibia_flag,50,14,12,11,13,precision,0.538,0.444,0.636
+"option B (seuils calibrés sur le dataset, LOSO)",side,trunk_vs_tibia_flag,50,14,12,11,13,recall,0.560,0.360,0.760
+"option B (seuils calibrés sur le dataset, LOSO)",side,trunk_vs_tibia_flag,50,14,12,11,13,specificity,0.520,0.320,0.720
+"option B (seuils calibrés sur le dataset, LOSO)",side,trunk_vs_tibia_flag,50,14,12,11,13,f1,0.549,0.409,0.656
+"option B (seuils calibrés sur le dataset, LOSO)",side,trunk_vs_tibia_flag,50,14,12,11,13,balanced_accuracy,0.540,0.440,0.640
+"option B (seuils calibrés sur le dataset, LOSO)",side,head_position_flag,50,15,16,10,9,precision,0.484,0.385,0.576
+"option B (seuils calibrés sur le dataset, LOSO)",side,head_position_flag,50,15,16,10,9,recall,0.600,0.400,0.800
+"option B (seuils calibrés sur le dataset, LOSO)",side,head_position_flag,50,15,16,10,9,specificity,0.360,0.200,0.560
+"option B (seuils calibrés sur le dataset, LOSO)",side,head_position_flag,50,15,16,10,9,f1,0.536,0.400,0.655
+"option B (seuils calibrés sur le dataset, LOSO)",side,head_position_flag,50,15,16,10,9,balanced_accuracy,0.480,0.360,0.600
+"option B (seuils calibrés sur le dataset, LOSO)",front,≥ 1 règle,50,15,8,10,17,precision,0.652,0.500,0.818
+"option B (seuils calibrés sur le dataset, LOSO)",front,≥ 1 règle,50,15,8,10,17,recall,0.600,0.400,0.800
+"option B (seuils calibrés sur le dataset, LOSO)",front,≥ 1 règle,50,15,8,10,17,specificity,0.680,0.480,0.840
+"option B (seuils calibrés sur le dataset, LOSO)",front,≥ 1 règle,50,15,8,10,17,f1,0.625,0.468,0.773
+"option B (seuils calibrés sur le dataset, LOSO)",front,≥ 1 règle,50,15,8,10,17,balanced_accuracy,0.640,0.500,0.780
+"option B (seuils calibrés sur le dataset, LOSO)",front,knee_valgus_flag,50,7,3,18,22,precision,0.700,0.400,1.000
+"option B (seuils calibrés sur le dataset, LOSO)",front,knee_valgus_flag,50,7,3,18,22,recall,0.280,0.120,0.480
+"option B (seuils calibrés sur le dataset, LOSO)",front,knee_valgus_flag,50,7,3,18,22,specificity,0.880,0.760,1.000
+"option B (seuils calibrés sur le dataset, LOSO)",front,knee_valgus_flag,50,7,3,18,22,f1,0.400,0.188,0.595
+"option B (seuils calibrés sur le dataset, LOSO)",front,knee_valgus_flag,50,7,3,18,22,balanced_accuracy,0.580,0.460,0.700
+"option B (seuils calibrés sur le dataset, LOSO)",front,hip_shift_flag,50,11,6,14,19,precision,0.647,0.467,0.857
+"option B (seuils calibrés sur le dataset, LOSO)",front,hip_shift_flag,50,11,6,14,19,recall,0.440,0.240,0.640
+"option B (seuils calibrés sur le dataset, LOSO)",front,hip_shift_flag,50,11,6,14,19,specificity,0.760,0.560,0.920
+"option B (seuils calibrés sur le dataset, LOSO)",front,hip_shift_flag,50,11,6,14,19,f1,0.524,0.333,0.683
+"option B (seuils calibrés sur le dataset, LOSO)",front,hip_shift_flag,50,11,6,14,19,balanced_accuracy,0.600,0.480,0.720
+"option B (seuils calibrés sur le dataset, LOSO)",diagonal,≥ 1 règle,49,23,13,2,11,precision,0.639,0.558,0.742
+"option B (seuils calibrés sur le dataset, LOSO)",diagonal,≥ 1 règle,49,23,13,2,11,recall,0.920,0.800,1.000
+"option B (seuils calibrés sur le dataset, LOSO)",diagonal,≥ 1 règle,49,23,13,2,11,specificity,0.458,0.273,0.667
+"option B (seuils calibrés sur le dataset, LOSO)",diagonal,≥ 1 règle,49,23,13,2,11,f1,0.754,0.667,0.833
+"option B (seuils calibrés sur le dataset, LOSO)",diagonal,≥ 1 règle,49,23,13,2,11,balanced_accuracy,0.689,0.580,0.800
+"option B (seuils calibrés sur le dataset, LOSO)",diagonal,knee_valgus_flag,49,14,6,11,18,precision,0.700,0.562,0.867
+"option B (seuils calibrés sur le dataset, LOSO)",diagonal,knee_valgus_flag,49,14,6,11,18,recall,0.560,0.360,0.760
+"option B (seuils calibrés sur le dataset, LOSO)",diagonal,knee_valgus_flag,49,14,6,11,18,specificity,0.750,0.560,0.917
+"option B (seuils calibrés sur le dataset, LOSO)",diagonal,knee_valgus_flag,49,14,6,11,18,f1,0.622,0.462,0.745
+"option B (seuils calibrés sur le dataset, LOSO)",diagonal,knee_valgus_flag,49,14,6,11,18,balanced_accuracy,0.655,0.541,0.760
+"option B (seuils calibrés sur le dataset, LOSO)",diagonal,hip_shift_flag,49,20,11,5,13,precision,0.645,0.553,0.760
+"option B (seuils calibrés sur le dataset, LOSO)",diagonal,hip_shift_flag,49,20,11,5,13,recall,0.800,0.640,0.960
+"option B (seuils calibrés sur le dataset, LOSO)",diagonal,hip_shift_flag,49,20,11,5,13,specificity,0.542,0.348,0.739
+"option B (seuils calibrés sur le dataset, LOSO)",diagonal,hip_shift_flag,49,20,11,5,13,f1,0.714,0.613,0.808
+"option B (seuils calibrés sur le dataset, LOSO)",diagonal,hip_shift_flag,49,20,11,5,13,balanced_accuracy,0.671,0.560,0.780
