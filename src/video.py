@@ -82,7 +82,7 @@ def render_annotated(video_path: Path, analysis: Analysis, out_path: Path,
     out_path.parent.mkdir(parents=True, exist_ok=True)
     writer = imageio_ffmpeg.write_frames(
         str(out_path), (out_w, out_h), fps=analysis.pose.fps, codec="libx264",
-        pix_fmt_in="rgb24", output_params=["-pix_fmt", "yuv420p"], macro_block_size=2)
+        pix_fmt_in="rgb24", pix_fmt_out="yuv420p", macro_block_size=2)
     writer.send(None)  # initialise le générateur
     n = analysis.pose.n_frames
     for i in range(n):

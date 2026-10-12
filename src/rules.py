@@ -66,7 +66,10 @@ def evaluate_reps(indicators: pd.DataFrame, reps: pd.DataFrame, view: str,
                 # Mesure RELATIVE à la posture debout du début de la répétition
                 # (médiane de 3 images, pour ne pas dépendre d'une image bruitée)
                 s0 = int(rep["start"])
-                values = values - np.nanmedian(series[max(0, s0 - 1):s0 + 2])
+                ref = series[max(0, s0 - 1):s0 + 2]
+                # Référence non mesurable -> toute la répétition est "non mesurée"
+                ref_value = np.nanmedian(ref) if np.any(~np.isnan(ref)) else np.nan
+                values = values - ref_value
             if len(values) == 0 or np.all(np.isnan(values)):
                 value, error = np.nan, np.nan
             else:
