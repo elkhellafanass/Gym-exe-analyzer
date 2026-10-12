@@ -60,7 +60,13 @@ def evaluate_reps(indicators: pd.DataFrame, reps: pd.DataFrame, view: str,
             if reliability is None:
                 continue
             frames = window_frames(indicators, rep, rule["window"])
-            values = indicators[rule["indicator"]].to_numpy()[frames]
+            series = indicators[rule["indicator"]].to_numpy()
+            values = series[frames]
+            if rule.get("reference") == "start":
+                # Mesure RELATIVE à la posture debout du début de la répétition
+                # (médiane de 3 images, pour ne pas dépendre d'une image bruitée)
+                s0 = int(rep["start"])
+                values = values - np.nanmedian(series[max(0, s0 - 1):s0 + 2])
             if len(values) == 0 or np.all(np.isnan(values)):
                 value, error = np.nan, np.nan
             else:

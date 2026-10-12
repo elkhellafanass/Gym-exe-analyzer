@@ -23,9 +23,9 @@ Critères cités (tableau 1 de l'article, citations exactes) et règle correspon
 | Règle (`config.yaml`) | Citation de la source | Ce que mesure le projet | Statut |
 |---|---|---|---|
 | `depth` | "At apex of depth, the tops of thighs are at least parallel to the ground." Et dans le texte : "the hip joint is at least level with or slightly below the knee joint." | hanche (point MediaPipe) au moins au niveau du genou → `depth ≥ 0` | sourcé |
-| `heel_rise` | "Entire foot remains in contact with the ground." / "Lifting heels or toes off of the ground at any time is suboptimal" | montée du talon > 15 % de la longueur du pied | critère sourcé, seuil à valider |
+| `heel_rise` | "Entire foot remains in contact with the ground." / "Lifting heels or toes off of the ground at any time is suboptimal" | montée du talon par rapport à sa position debout en début de répétition > 15 % de la longueur du pied | critère sourcé, seuil à valider |
 | `trunk_vs_tibia` | "Trunk is parallel to tibia, while maintaining slightly lordotic lumbar spine." | inclinaison tronc − inclinaison tibia > 15° | critère sourcé, seuil à valider |
-| `head_position` | "Line of neck is perpendicular to the ground and gaze is aimed forward." | inclinaison épaule→oreille / verticale > 30° | critère sourcé, seuil à valider |
+| `head_position` | "Line of neck is perpendicular to the ground and gaze is aimed forward." | augmentation de l'inclinaison épaule→oreille par rapport à la posture debout > 30° | critère sourcé, seuil à valider |
 | `knee_valgus` | "Lateral aspect of knee does not cross medial malleolus for either leg." | ratio séparation genoux / chevilles < 1 (approximation, voir `mizner2012`) | critère sourcé, seuil à valider |
 | `hip_shift` | "Line of hips is parallel to ground in frontal plane throughout squat." | inclinaison de la ligne des hanches > 10° | critère sourcé, seuil à valider |
 | `min_reps_for_video_error` | un défaut est noté s'il apparaît "during 2 or more repetitions" (sur 10 répétitions) | défaut retenu pour la vidéo si ≥ 2 répétitions concernées | sourcé (le dataset a ~10-20 répétitions par vidéo, contre 10 dans la source) |
@@ -42,6 +42,9 @@ une durée est connue à ±0,067 s près.
 - Myer et al. décrivent un squat arrière avec un bâton (dowel) évalué **à l'œil** par un professionnel. Le dataset
   montre des squats au poids du corps, mesurés par un modèle de pose en 2D.
 - Le point "hanche" de MediaPipe approxime le centre articulaire ; le pli de l'aine n'est pas détecté.
+- Talons et cou sont mesurés **relativement à la posture debout** du début de chaque répétition. Raison vérifiée
+  sur données réelles : avec une référence absolue, le point talon de MediaPipe (qui descend légèrement au point
+  bas) et le décalage oreille/épaule faisaient déclencher ces règles sur presque toutes les vidéos « good ».
 - Le critère `knee_valgus` parle du bord latéral du genou et de la malléole médiale. MediaPipe ne donne que les
   centres du genou et de la cheville. Le ratio < 1 est donc une approximation, qui signale plus tôt que le
   critère d'origine.

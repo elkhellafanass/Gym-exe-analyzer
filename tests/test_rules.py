@@ -40,6 +40,13 @@ def test_squat_partiel_et_talons():
     assert not verdicts["trunk_vs_tibia"]
 
 
+def test_talon_qui_descend_au_point_bas_nest_pas_une_erreur():
+    """Cas observé sur données réelles : le point talon descend un peu au point
+    bas. La mesure relative au début de répétition ne doit pas le signaler."""
+    pose = squat_pose(phase_signal(n_reps=5), heel_lift=-0.3)
+    assert not _verdicts(analyze_pose(pose, "side", CONFIG))["heel_rise"]
+
+
 def test_tronc_penche():
     pose = squat_pose(phase_signal(n_reps=5), trunk_max=60, tibia_max=25)
     assert _verdicts(analyze_pose(pose, "side", CONFIG))["trunk_vs_tibia"]

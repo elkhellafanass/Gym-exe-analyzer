@@ -38,9 +38,9 @@ def test_indicateurs_squat_synthetique():
     # Cuisse à 100° de la verticale : hanche sous le genou de cos(80°) cuisse
     assert bas["depth"] == pytest.approx(np.cos(np.radians(80)), abs=1e-6)
     assert debout["depth"] == pytest.approx(-1.0)
-    assert bas["heel_rise"] > 0.2
-    assert info["foot_len_px"] == pytest.approx(np.hypot(80, 0), rel=0.5)
-    assert FOOT > 0
+    # Talon monté de 0,25 longueur de pied (à la longueur médiane du pied près)
+    assert bas["heel_height"] - debout["heel_height"] == pytest.approx(0.25, rel=0.05)
+    assert info["foot_len_px"] == pytest.approx(FOOT, rel=0.05)
 
 
 def test_ratio_genoux_chevilles_vue_de_face():

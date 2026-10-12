@@ -98,11 +98,13 @@ def compute_indicators(series: PoseSeries) -> tuple[pd.DataFrame, dict]:
     # > 0 : le tronc est plus penché que le tibia.
     df["trunk_minus_tibia"] = df["trunk_lean"] - df["tibia_lean"]
 
-    # Talons : montée du talon par rapport à sa position "au sol". Le sol est
-    # estimé par le 90e centile de la hauteur du talon (le talon est le plus
-    # bas quand il est posé). Hypothèse : caméra fixe. Unité : longueur de pied.
-    heel_floor = np.nanpercentile(heel[:, 1], 90)
-    df["heel_rise"] = (heel_floor - heel[:, 1]) / foot_len
+    # Talons : hauteur du talon (vers le haut = positif), en longueurs de pied.
+    # La MONTÉE est calculée dans rules.py par rapport au début de chaque
+    # répétition (debout, talon posé). Pourquoi pas une référence "sol" unique
+    # pour toute la vidéo ? Vérification sur données réelles : le point talon
+    # de MediaPipe descend légèrement dans l'image au point bas du squat ; une
+    # référence globale faisait passer les phases debout pour des talons levés.
+    df["heel_height"] = -heel[:, 1] / foot_len
 
     # --- plan frontal (vue de face) ---
     knee_w = np.abs(p("knee_l")[:, 0] - p("knee_r")[:, 0])
