@@ -17,6 +17,11 @@ Les vidéos originales ne sont pas modifiées. Le projet en tire :
 - des points du squelette (landmarks MediaPipe), des angles articulaires et des indicateurs par répétition ;
 - des métriques agrégées (tableaux CSV, figures) publiées dans `docs/figures/`.
 
+**Ce que la licence ne couvre pas :** la CC BY 4.0, section 2(b)(1), exclut explicitement les droits de la
+personnalité : "Moral rights [...] are not licensed under this Public License, nor are publicity, privacy, and/or
+other similar personality rights" (https://creativecommons.org/licenses/by/4.0/legalcode.en). Le README du dataset
+ne mentionne pas le consentement des participants.
+
 **Non-publication des vidéos :** la licence autoriserait leur redistribution, mais les vidéos montrent des personnes
 identifiables. Elles ne sont **jamais** versionnées ni publiées (dépôt GitHub, app en ligne), ni sous forme
 d'images extraites (`docs/inspection/` est dans `.gitignore`). Seules des données dérivées et agrégées sont publiées.

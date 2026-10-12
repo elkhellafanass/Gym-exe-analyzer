@@ -1,6 +1,9 @@
 # Inspection des vidéos "bad" (phase 0)
 
-Le dataset donne un seul label par vidéo (good/bad), **sans décrire le type d'erreur**. Avant d'écrire des
+Le dataset donne un seul label par vidéo (good/bad), **sans décrire le type d'erreur**. Le `README.md` fourni avec
+le dataset (lu le 12/10/2026) le confirme : il décrit les dossiers, les vues et le nommage, mais ni les types
+d'erreur, ni le protocole d'étiquetage, ni le consentement des participants. Il annonce 26 sujets, alors que le
+dossier squat en contient 25 (le sujet 025 manque). Avant d'écrire des
 règles, on a regardé les vidéos.
 
 **Méthode** (`scripts/inspect_bad_videos.py`) : MediaPipe Pose sur les 150 vidéos. Le point bas de chaque
