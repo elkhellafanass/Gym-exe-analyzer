@@ -60,6 +60,10 @@ Le même code (`src/analysis.py`) sert à l'application et aux scripts d'évalua
    la règle : les vidéos bad ont les genoux plus en avant. Seules les règles de face montrent un écart (valgus
    16 % contre 28 %, bassin 0 % contre 16 % des vidéos), non significatif.
 
+5. **Annotation seulement en partie aveugle.** Avant d'annoter, l'auteur a vu les planches d'inspection et la
+   description de certains sujets (ex. 016 bad sur la pointe des pieds, 004 et 008 good pas assez profonds). Il peut
+   donc reconnaître certaines personnes malgré l'anonymisation (V01 à V50).
+
 Autres limites, détaillées dans `docs/INSPECTION.md` et `docs/SOURCES.md` :
 - 15 fps : tempo à ±0,07 s ;
 - plusieurs personnes à l'image, cas hors du périmètre prévu par la fiche du modèle ;
@@ -67,6 +71,61 @@ Autres limites, détaillées dans `docs/INSPECTION.md` et `docs/SOURCES.md` :
 - 25 sujets seulement ;
 - un label par vidéo, sans type d'erreur ;
 - inspection visuelle faite par un non-expert.
+
+## Plan des phases B et C (mis à jour le 12/10/2026, cahier des charges « rapport de correction »)
+
+L'utilisateur envoie une vidéo de squat (importée ou filmée sur son téléphone) et reçoit un rapport de correction
+complet. Aucune vidéo « idéale » n'est générée. **Toute fiabilité affichée vient de l'évaluation réelle**
+(leave-one-subject-out et annotation en aveugle), jamais d'une estimation a priori.
+
+**Phase B : évaluation (après la fin de l'annotation)**
+1. `src/features.py` : un seul module construit le vecteur d'indicateurs d'une vidéo (médianes par répétition). Il
+   sert à l'entraînement ET à l'app, pour garantir les mêmes calculs.
+2. `scripts/train.py` / `scripts/evaluate.py`, en étapes numérotées :
+   - régression logistique et forêt aléatoire, en leave-one-subject-out ;
+   - résultats par vue ;
+   - précision, rappel, F1, matrice de confusion, IC par bootstrap **par sujet**.
+3. **Probabilités et incertitude.** On évalue la calibration des probabilités en LOSO (score de Brier, courbe de
+   fiabilité). Une zone « incertain » autour de 0,5 est proposée : sa largeur est un choix d'ingénierie, déclaré
+   comme tel.
+4. **Fiabilité de chaque règle** → `docs/results/rule_reliability.csv`, lu par l'app :
+   - règles de profil : sensibilité et spécificité contre l'annotation en aveugle (n = 50 vidéos, avec IC) ;
+   - règles de face et de diagonale : pas d'annotation, donc seulement les taux good/bad. Elles sont affichées
+     « fiabilité non évaluée contre annotation ».
+5. **Analyse secondaire (option B),** clairement séparée : seuils recalibrés en LOSO.
+6. **Modèle publié dans le dépôt** (`models/*.joblib`, quelques Ko, appris sur des indicateurs dérivés, sans
+   image). C'est nécessaire pour la version en ligne : `.gitignore` sera ajusté pour ce seul fichier.
+
+**Phase C : application et rapport**
+1. **Verdict global :** probabilité « bad » + zone d'incertitude + performance LOSO mesurée pour la vue choisie.
+   Jamais formulé comme une certitude. La vue (face/profil/diagonale) est déclarée par l'utilisateur.
+2. **Détail par répétition :** indicateurs, règles déclenchées, fiabilité de chaque règle (table de la phase B, plus
+   les mentions « fiabilité réduite en diagonale » et « talons : indicateur peu fiable »).
+   Le modèle donne un verdict **par vidéo** seulement : le dataset n'a pas de label par répétition.
+3. **Correction écrite pour chaque défaut :**
+   - texte en français simple, tiré de `config.yaml`, avec la source du seuil, son statut (« à valider par un
+     expert » si besoin) et sa fiabilité mesurée ;
+   - aucun conseil médical.
+4. **Vidéo annotée :**
+   - squelette et angles ;
+   - surlignage des répétitions fautives (bandeau rouge pendant la répétition) ;
+   - frise chronologique Plotly des répétitions et des défauts sous la vidéo.
+5. **Comparaison côte à côte avec une vidéo good du dataset** (local uniquement, masquée si le dataset est absent,
+   donc toujours en ligne) :
+   - même vue ;
+   - images du point bas mises côte à côte ;
+   - avertissement : une vidéo « good » du dataset n'est pas un modèle idéal (par exemple, beaucoup ne respectent
+     pas la profondeur de Myer).
+6. **Export du rapport :**
+   - **HTML autonome** en priorité (graphiques intégrés) ;
+   - PDF via l'impression du navigateur, ou en option si le temps le permet ;
+   - le rapport ne contient jamais d'image du dataset ;
+   - la vidéo de l'utilisateur est traitée dans un dossier temporaire puis supprimée.
+7. **Filmer dans l'app** (webcam, streamlit-webrtc) reste un bonus. Le parcours prévu est : filmer avec le téléphone,
+   puis importer.
+
+**Ce qui est prioritaire si le temps manque (délai : 2 semaines) :** 1 à 4 et l'export HTML sont indispensables.
+La comparaison côte à côte, le PDF natif et la webcam sont optionnels.
 
 ## Questions probables du jury
 
