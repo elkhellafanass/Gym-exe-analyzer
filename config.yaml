@@ -1,0 +1,39 @@
+# =====================================================================
+# Gym-exe-analyzer : configuration centrale
+# Outil pédagogique d'aide à l'analyse technique.
+# Ce n'est PAS un dispositif médical. Aucune prédiction de blessure.
+# =====================================================================
+
+app:
+  name: "Gym-exe-analyzer"
+  disclaimer: "Outil pédagogique d'aide à l'analyse technique. Ce n'est pas un dispositif médical et il ne prédit aucune blessure."
+
+dataset:
+  # Chemin local du dataset (surchargeable par la variable d'environnement SQUAT_DATA_DIR).
+  squat_dir: "data/squat"
+  env_var: "SQUAT_DATA_DIR"
+  # Nom de fichier attendu : subject_<ID>_squat_<good|bad>_<front|side|diagonal>.mp4
+  filename_pattern: '^subject_(?P<subject>\d{3})_(?P<exercise>[a-z]+)_(?P<quality>good|bad)_(?P<view>front|side|diagonal)\.mp4$'
+  index_csv: "data/index.csv"
+  own_videos_dir: "data/own"
+  citation: >-
+    Sai Prashanth, Duddela; Kamath, Priya; Bhandary, Rakshith; Pai, S Ashlesh;
+    PN, Pratham; P, Advith; Mashetty, Abhishek (2026), "A Multi-View Raw Video
+    Dataset of Seven Fitness Exercises with Good/Bad Form Labels",
+    Mendeley Data, V2, doi: 10.17632/kgbb3yn47p.2
+  url: "https://data.mendeley.com/datasets/kgbb3yn47p/2"
+  license: "CC BY 4.0"
+  license_url: "https://creativecommons.org/licenses/by/4.0/"
+  accessed: "2026-10-12"
+
+# ---------------------------------------------------------------------
+# Exercices. Architecture prévue pour en ajouter d'autres (non fait).
+# Chaque seuil a : value, source (clé de docs/SOURCES.md) et status.
+#   status: "sourcé"                -> valeur tirée d'une source vérifiée
+#   status: "à valider par un expert" -> pas de source trouvée / choix d'ingénierie
+# Les seuils seront renseignés en PHASE A, après l'inspection des vidéos "bad".
+# ---------------------------------------------------------------------
+exercises:
+  squat:
+    label: "Squat"
+    thresholds: {}

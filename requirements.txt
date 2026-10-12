@@ -1,0 +1,14 @@
+# Dépendances d'exécution (app + scripts). Versions épinglées = reproductibilité
+# des résultats du mémoire. Compatible Streamlit Community Cloud.
+streamlit==1.65.0
+# MediaPipe >= 1.0 : uniquement l'API "Tasks" (PoseLandmarker, 33 points).
+mediapipe==1.1.0
+opencv-python-headless==5.0.0.93
+numpy==2.5.4
+pandas==3.0.6
+scipy==1.18.1
+scikit-learn==1.9.1
+plotly==7.1.0
+imageio-ffmpeg==0.6.0
+pyyaml==6.0.3
+matplotlib==3.11.2
