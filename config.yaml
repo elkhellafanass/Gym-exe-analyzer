@@ -136,3 +136,20 @@ exercises:
     info_only:
       tempo: "Rapport descente/remontée affiché, sans règle : le critère de tempo de Myer et al. (2014) est formulé de façon ambiguë, et 15 fps limite la précision."
       knee_asymmetry: "Différence d'angle de genou gauche/droite (projection 2D), affichée sans seuil."
+
+# ---------------------------------------------------------------------
+# Évaluation et classifieur (phase B). Valeurs FIXÉES AVANT tout résultat
+# (protocole committé avant la première exécution), jamais réglées ensuite.
+# Ce sont des choix d'ingénierie, pas des critères de posture.
+# ---------------------------------------------------------------------
+evaluation:
+  # Modèle utilisé par l'app : régression logistique (choisie d'avance pour son
+  # explicabilité). La forêt aléatoire sert seulement de comparaison.
+  app_model: logreg
+  logreg: {C: 1.0, max_iter: 1000}
+  random_forest: {n_estimators: 500, min_samples_leaf: 3, random_state: 42}
+  # Probabilité "bad" dans cette zone -> verdict "incertain". Largeur non optimisée.
+  uncertain_zone: [0.35, 0.65]
+  bootstrap: {n: 2000, seed: 42}       # rééchantillonnage des SUJETS
+  permutation: {n: 1000, seed: 42}     # test de permutation (régression logistique)
+  calibration_bins: 5                  # courbe de fiabilité (5 groupes de 30 vidéos)

@@ -127,6 +127,31 @@ complet. Aucune vidéo « idéale » n'est générée. **Toute fiabilité affich
 **Ce qui est prioritaire si le temps manque (délai : 2 semaines) :** 1 à 4 et l'export HTML sont indispensables.
 La comparaison côte à côte, le PDF natif et la webcam sont optionnels.
 
+## Protocole de la phase B (figé et committé AVANT la première exécution)
+
+Ce protocole a été écrit et committé avant d'exécuter `train.py` et `evaluate.py` sur les données réelles. Le
+commit le prouve (historique git). Toute modification ultérieure serait signalée comme telle.
+
+| Élément | Choix fixé d'avance |
+|---|---|
+| Unité d'analyse | la vidéo (un label par vidéo) ; une ligne = médiane des répétitions de chaque indicateur |
+| Indicateurs | ceux des règles applicables à la vue + rapport de tempo (`src/features.py`) |
+| Modèles | un par vue ; régression logistique (C = 1) et forêt aléatoire (500 arbres, 3 vidéos min. par feuille) |
+| Modèle de l'app | régression logistique (explicabilité), quel que soit le résultat ; la forêt sert de comparaison |
+| Validation | leave-one-subject-out, 25 plis, les 6 vidéos d'un sujet dans le même pli |
+| Prétraitement | imputation (médiane) et normalisation dans un Pipeline, apprises dans chaque pli |
+| Hyperparamètres | aucune recherche ; valeurs de `config.yaml` (`evaluation`) |
+| Décision | « bad » si probabilité > 0,5 ; zone « incertain » [0,35 ; 0,65] (choix d'ingénierie, non optimisé) |
+| Détecteur à seuils (option A) | vidéo « bad » si ≥ 1 règle applicable à la vue retient un défaut (≥ 2 répétitions) |
+| Vidéo sans répétition | « non analysable », exclue des métriques et comptée |
+| IC | bootstrap percentile 95 %, 2000 tirages **de sujets** (graine 42) |
+| Références | hasard (pile ou face, 10 000 tirages), « toujours bad », « toujours good », probabilité constante 0,5 (Brier = 0,25) |
+| Test de permutation | régression logistique, 1000 permutations good/bad à l'intérieur de chaque paire (sujet, vue) |
+| Calibration | score de Brier ; courbe de fiabilité en 5 groupes de taille égale |
+| Accord annotateur / label | kappa de Cohen ; principal : « incertain » exclu ; sensibilité : « incertain » = désaccord / = accord |
+| Règle vs annotation | défaut « présent » = noté sur quelques répétitions ou la plupart (principal) ; « la plupart » seulement (secondaire) ; correspondance : depth↔depth, heel_rise↔heel_rise, trunk_vs_tibia↔trunk_lean, head_position↔head |
+| Option B (secondaire, script séparé) | seuil choisi dans chaque pli par l'indice de Youden, sens de la règle inchangé, égalité → seuil le plus proche de la littérature |
+
 ## Questions probables du jury
 
 *(Les 15 questions et leurs réponses seront rédigées à partir des résultats réels de la phase B.)*
