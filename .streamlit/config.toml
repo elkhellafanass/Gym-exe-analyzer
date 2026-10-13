@@ -1,0 +1,11 @@
+# Configuration Streamlit (locale et Streamlit Community Cloud).
+[server]
+# Taille maximale d'une vidéo envoyée (Mo). Une vidéo de 30 s en 1080p fait ~30-60 Mo.
+maxUploadSize = 200
+
+[browser]
+gatherUsageStats = false
+
+[client]
+# Barre d'outils réduite (pas de bouton « Deploy » pour les visiteurs)
+toolbarMode = "viewer"

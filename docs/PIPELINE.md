@@ -96,7 +96,7 @@ complet. Aucune vidéo « idéale » n'est générée. **Toute fiabilité affich
 6. **Modèle publié dans le dépôt** (`models/*.joblib`, quelques Ko, appris sur des indicateurs dérivés, sans
    image). C'est nécessaire pour la version en ligne : `.gitignore` sera ajusté pour ce seul fichier.
 
-**Phase C : application et rapport**
+**Phase C : application et rapport (faite le 13/10/2026 ; non faits, car optionnels : comparaison côte à côte, PDF natif, webcam)**
 1. **Verdict global :** probabilité « bad » + zone d'incertitude + performance LOSO mesurée pour la vue choisie.
    Jamais formulé comme une certitude. La vue (face/profil/diagonale) est déclarée par l'utilisateur.
 2. **Détail par répétition :** indicateurs, règles déclenchées, fiabilité de chaque règle (table de la phase B, plus

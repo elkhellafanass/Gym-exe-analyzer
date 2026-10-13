@@ -61,6 +61,10 @@ def draw_frame(frame: np.ndarray, analysis: Analysis, i: int, scale: float) -> n
                                       & (analysis.rep_results["error"] == True)]  # noqa: E712
         for label in errors["label"]:
             lines.append((ascii_text(label), RED))
+        if len(errors):
+            # Surlignage du moment fautif : cadre rouge pendant toute la répétition
+            h, w = frame.shape[:2]
+            cv2.rectangle(frame, (0, 0), (w - 1, h - 1), RED, max(4, h // 120))
 
     font_scale = max(0.4, frame.shape[0] / 1400)
     line_h = int(28 * font_scale / 0.6)
@@ -72,8 +76,12 @@ def draw_frame(frame: np.ndarray, analysis: Analysis, i: int, scale: float) -> n
 
 
 def render_annotated(video_path: Path, analysis: Analysis, out_path: Path,
-                     max_height: int = 960, progress=None) -> Path:
-    """Écrit la vidéo annotée (mp4 H.264) et renvoie son chemin."""
+                     max_height: int = 960, progress=None, hide_image: bool = False) -> Path:
+    """Écrit la vidéo annotée (mp4 H.264) et renvoie son chemin.
+
+    hide_image=True : squelette seul sur fond noir. Pourquoi ? Pour partager
+    une analyse sans montrer le visage ni le décor de la personne filmée.
+    """
     cap = cv2.VideoCapture(str(video_path))
     width, height = analysis.pose.width, analysis.pose.height
     out_w, out_h = _even_size(width, height, max_height)
@@ -90,6 +98,8 @@ def render_annotated(video_path: Path, analysis: Analysis, out_path: Path,
         if not ok:
             break
         frame = cv2.resize(frame, (out_w, out_h))
+        if hide_image:
+            frame = np.zeros_like(frame)
         frame = draw_frame(frame, analysis, i, scale)
         writer.send(np.ascontiguousarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)))
         if progress and i % 10 == 0:

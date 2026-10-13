@@ -181,3 +181,42 @@ external:
     v1:
       dir: "B_dai_squat"
       doi: "10.5281/zenodo.18859797"
+
+# ---------------------------------------------------------------------
+# Références citées dans l'app et dans le rapport (détail : docs/SOURCES.md)
+# ---------------------------------------------------------------------
+sources:
+  myer2014:
+    short: "Myer et al., 2014"
+    citation: "Myer GD, Kushner AM, et al. (2014). The back squat: a proposed assessment of functional deficits and technical factors that limit performance. Strength and Conditioning Journal, 36(6), 4-27."
+    url: "https://doi.org/10.1519/SSC.0000000000000103"
+  mizner2012:
+    short: "Mizner et al., 2012"
+    citation: "Mizner RL, Chmielewski TL, Toepke JJ, Tofte KB (2012). Comparison of 2-dimensional measurement techniques for predicting knee angle and moment during a drop vertical jump."
+    url: "https://pmc.ncbi.nlm.nih.gov/articles/PMC3340567"
+
+# ---------------------------------------------------------------------
+# Résumé de fiabilité de chaque règle, affiché dans l'app à côté des chiffres
+# de docs/results/rule_reliability.csv. C'est une LECTURE des résultats de la
+# phase B et de la validation externe (docs/PIPELINE.md), pas un nouveau calcul.
+# level : "la mieux validée" | "peu informative" | "dépend du format" | "non évaluée"
+# ---------------------------------------------------------------------
+reliability_summary:
+  depth:
+    level: "la mieux validée"
+    text: "Seule règle avec un résultat concluant hors du dataset d'origine : 4,7 % de fausses alertes sur des squats « standard » (Dai 2026, 28 sujets), quel que soit le format d'image. Attention : elle signale 92 % des vidéos « good » du dataset Mendeley, dont les squats ne descendent souvent pas jusqu'à la parallèle."
+  heel_rise:
+    level: "peu informative"
+    text: "Mesure du talon peu fiable à ces résolutions : sur Mendeley, elle signale autant de vidéos sans défaut visible (79 %) qu'avec (75 %) ; sur Dai, 35 à 67 % de fausses alertes selon le format d'image supposé."
+  trunk_vs_tibia:
+    level: "peu informative"
+    text: "Aucun accord avec l'annotation sur Mendeley (kappa 0,05). Elle signale, à titre indicatif, les dos très penchés mis en scène (Teng 2025), mais ses fausses alertes dépendent du format d'image (Dai : 9 à 44 %)."
+  head_position:
+    level: "peu informative"
+    text: "Peu de fausses alertes, mais elle manque environ 3 défauts de tête sur 4 vus par l'annotateur (Mendeley). Fausses alertes faibles sur Dai (2 %), qui varient un peu selon le format."
+  knee_valgus:
+    level: "non évaluée"
+    text: "Aucune annotation de face : seulement les taux de signalement sur les vidéos good et bad de Mendeley (face : 16 % contre 28 %). Fiabilité non évaluée."
+  hip_shift:
+    level: "non évaluée"
+    text: "Aucune annotation de face : seulement les taux de signalement sur Mendeley (face : 0 % contre 16 % ; diagonale : 75 % contre 84 %). Fiabilité non évaluée."
