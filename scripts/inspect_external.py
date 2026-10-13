@@ -6,17 +6,20 @@ Ce script DÉCRIT seulement : il ne calcule aucune règle, aucun résultat.
 
   A) Teng 2025 (Zenodo 10.5281/zenodo.17558630) : images de profil,
      classes Good / Bad Back / Bad Heel.
-  B) Dai 2026 (Zenodo 10.5281/zenodo.18859797) : points MediaPipe en CSV,
+  B) Dai 2026 (Zenodo v2 10.5281/zenodo.19550070, v1 18859797) : points en CSV,
      classes Standard / Shallow / GoodMorning.
 
 Étapes :
   1) A : dossiers, fichiers par classe, formats, résolutions
   2) A : doublons exacts (même fichier dans train et test ?)
   3) A : planche de quelques images par classe, enregistrée HORS du dépôt
-  4) B : fichiers par classe, sujets, essais
-  5) B : colonnes, plages de valeurs, nombre d'images, valeurs manquantes
-  6) B : doublons entre les zip
-  7) ce qui n'est pas documenté
+  4) A : images voisines quasi identiques -> blocs (corrélation)
+  5) A : détection MediaPipe par résolution et par classe (aucune règle)
+  6) A : phase du mouvement (angle du genou, descriptif)
+  7) B : v1 et v2 : fichiers, sujets, doublons, colonnes, comparaison
+  8) B : géométrie (sens de y, vue, côté visible, répétitions par fichier)
+  9) B : rapport largeur/hauteur : hypothèses testées, méthode validée sur Mendeley
+  10) ce qui n'est pas documenté
 
 Sortie : la console + outputs/external/*.csv (non versionné).
 Usage : python scripts/inspect_external.py
@@ -33,13 +36,17 @@ sys.path.insert(0, str(ROOT))
 import numpy as np  # noqa: E402
 import pandas as pd  # noqa: E402
 from PIL import Image, ImageDraw  # noqa: E402
+from scipy.signal import find_peaks  # noqa: E402
 
+from src.analysis import model_path  # noqa: E402
+from src.angles import angle_3pts  # noqa: E402
 from src.config import external_data_dir, load_config  # noqa: E402
+from src.external import ASPECT_GRID, estimate_aspect, length_instability, read_normalized  # noqa: E402
+from src.pose import LM, PoseSeries, extract_pose_images  # noqa: E402
 
 config = load_config()
 ext = external_data_dir(config)
 A_DIR = ext / config["external"]["teng_squat"]["dir"]
-B_DIR = ext / config["external"]["dai_squat"]["dir"]
 OUT = ROOT / "outputs" / "external"
 OUT.mkdir(parents=True, exist_ok=True)
 INSPECTION = Path(config["external"]["inspection_dir"])
@@ -111,68 +118,292 @@ sheet_path = INSPECTION / "A_teng_planche.jpg"
 sheet.save(sheet_path, quality=85)
 print(f"Planche : {sheet_path} (8 images tirées au hasard par classe, graine 42)")
 
-print("\n=== 4) B (Dai) : classes, sujets, essais ===")
+
+print("\n=== 4) A : images voisines quasi identiques -> blocs ===")
+# Les fichiers sont numérotés dans l'ordre du temps (vérifié ci-dessous) :
+# ce sont des images extraites de vidéos. Deux images voisines ne sont pas
+# deux observations indépendantes. On mesure la différence moyenne entre
+# vignettes 32x32 en niveaux de gris (0 = identiques, 1 = opposées).
+A["num"] = A["file"].str.extract(r"(\d+)", expand=False).astype(int)
+A = A.sort_values(["split", "folder", "num"]).reset_index(drop=True)
+
+
+def thumb(r) -> np.ndarray:
+    with Image.open(A_DIR / r.split / r.folder / r.file) as im:
+        return np.asarray(im.convert("L").resize((32, 32)), dtype=float) / 255
+
+
+T = np.stack([thumb(r) for r in A.itertuples()])
+same_folder = np.r_[False, (A["split"].values[1:] == A["split"].values[:-1])
+                    & (A["folder"].values[1:] == A["folder"].values[:-1])]
+step = np.r_[np.nan, np.abs(T[1:] - T[:-1]).mean(axis=(1, 2))]
+rng = np.random.default_rng(42)
+i, j = rng.integers(0, len(T), 5000), rng.integers(0, len(T), 5000)
+random_pairs = np.abs(T[i] - T[j]).mean(axis=(1, 2))
+print("Différence entre images de numéros consécutifs (même dossier), quantiles 10/50/90/99 % : "
+      f"{np.round(np.quantile(step[same_folder], [.1, .5, .9, .99]), 3)}")
+print("Différence entre paires tirées au hasard, quantiles 1/10/50 % : "
+      f"{np.round(np.quantile(random_pairs, [.01, .1, .5]), 3)}")
+print("-> la numérotation suit le temps : images voisines presque identiques.")
+for t in (0.02, 0.03, 0.05, 0.08):
+    # nouveau bloc quand on change de dossier OU quand l'image change brusquement
+    A[f"block_{t}"] = np.cumsum(~same_folder | (step > t))
+    sizes = A.groupby(f"block_{t}").size()
+    per_class = A.groupby("class")[f"block_{t}"].nunique().to_dict()
+    print(f"  seuil {t:.2f} : {sizes.size:4d} blocs (taille médiane {sizes.median():.0f}, "
+          f"max {sizes.max()}) ; par classe {per_class}")
+
+# Planche : première image de chaque bloc (seuil 0,05) -> vérifier à l'œil
+# qu'un bloc = une prise de vue continue. Hors du dépôt.
+block_size = A.groupby("block_0.05").size()
+firsts = A.groupby("block_0.05").head(1)
+size, ncols = 150, 12
+nrows = int(np.ceil(len(firsts) / ncols))
+sheet = Image.new("RGB", (ncols * size, nrows * (size + 14)), "white")
+draw = ImageDraw.Draw(sheet)
+for k, r in enumerate(firsts.itertuples()):
+    with Image.open(A_DIR / r.split / r.folder / r.file) as im:
+        th = im.convert("RGB")
+        th.thumbnail((size, size))
+    x, y = (k % ncols) * size, (k // ncols) * (size + 14)
+    sheet.paste(th, (x, y + 14))
+    n = int(block_size[A.loc[r.Index, "block_0.05"]])
+    draw.text((x + 2, y), f"{r.split[:2]} {r.folder[:8]} n={n}", fill="black")
+blocks_path = INSPECTION / "A_teng_blocs_0.05.jpg"
+sheet.save(blocks_path, quality=80)
+print(f"Planche des blocs (seuil 0,05) : {blocks_path}")
+print("Constat visuel : dans 'test/Bad Back', la numérotation alterne entre deux prises de vue "
+      "(blocs d'une image) ; une même scène se retrouve dans plusieurs classes et dans train/test.")
+
+print("\n=== 4 bis) A : regroupement par SCÈNE (personne + lieu + tenue, approximatif) ===")
+# Pourquoi ? Les blocs consécutifs coupent une même prise de vue en morceaux.
+# Une "scène" regroupe les images qui se ressemblent globalement (vignette
+# couleur 16x16, classification hiérarchique, lien moyen). C'est le plus proche
+# d'un "sujet" que l'on puisse construire, mais ce n'est PAS un sujet vérifié :
+# une personne peut changer de tenue ou de lieu, deux personnes peuvent
+# partager un lieu.
+from scipy.cluster.hierarchy import fcluster, linkage  # noqa: E402
+
+
+def color_thumb(r) -> np.ndarray:
+    with Image.open(A_DIR / r.split / r.folder / r.file) as im:
+        return np.asarray(im.convert("RGB").resize((16, 16)), dtype=float).ravel() / 255
+
+
+tree = linkage(np.stack([color_thumb(r) for r in A.itertuples()]), "average", metric="cityblock")
+for k in (6, 8, 10, 12, 15, 20):
+    A[f"scene_{k}"] = fcluster(tree, k, "maxclust")
+    ct = pd.crosstab(A[f"scene_{k}"], A["class"])
+    print(f"  {k:2d} scènes : tailles {sorted(ct.sum(axis=1).tolist(), reverse=True)} ; "
+          f"scènes présentes dans les 3 classes : {int((ct > 0).all(axis=1).sum())}")
+print("Images par scène et par classe (10 scènes) :")
+print(pd.crosstab(A["scene_10"], [A["class"]]).to_string())
+size, per = 130, 8
+sheet = Image.new("RGB", (per * size, 10 * (size + 14)), "white")
+draw = ImageDraw.Draw(sheet)
+for i, (k, g) in enumerate(A.groupby("scene_10")):
+    picks = g.iloc[np.random.default_rng(42).choice(len(g), min(per, len(g)), replace=False)]
+    draw.text((2, i * (size + 14)), f"scène {k} : {len(g)} images, classes "
+              f"{g['class'].value_counts().to_dict()}", fill="black")
+    for j, r in enumerate(picks.itertuples()):
+        with Image.open(A_DIR / r.split / r.folder / r.file) as im:
+            th = im.convert("RGB")
+            th.thumbnail((size, size))
+        sheet.paste(th, (j * size, i * (size + 14) + 14))
+scenes_path = INSPECTION / "A_teng_scenes_10.jpg"
+sheet.save(scenes_path, quality=80)
+print(f"Planche des scènes : {scenes_path}")
+
+print("\n=== 5) A : détection MediaPipe par résolution et par classe ===")
+# Les règles ne sont pas appliquées ici : on mesure seulement si les points
+# nécessaires sont détectés. Cache = coordonnées seulement (outputs/, non versionné).
+cache = OUT / "teng_landmarks.npz"
+names = [f"{r.split}/{r.folder}/{r.file}" for r in A.itertuples()]
+if cache.exists():
+    d = np.load(cache)
+    assert list(d["files"]) == names
+    xy, vis = d["xy"], d["vis"]
+else:
+    xy, vis, _ = extract_pose_images(
+        [A_DIR / n for n in names], model_path(config), config["pose"]["max_people"],
+        progress=lambda n, t: print(f"  {n}/{t}", end="\r") if n % 100 == 0 else None)
+    np.savez_compressed(cache, xy=xy, vis=vis, files=np.array(names))
+MIN_VIS = config["pose"]["min_visibility"]
+
+
+def side_ok(points: list[str]) -> np.ndarray:
+    """Vrai si tous les points listés sont visibles (>= seuil) d'au moins un côté."""
+    ok = np.zeros(len(vis), dtype=bool)
+    for s in ("l", "r"):
+        ok |= np.all(vis[:, [LM[f"{n}_{s}"] for n in points]] >= MIN_VIS, axis=1)
+    return ok
+
+
+A["person_found"] = ~np.isnan(xy[:, LM["hip_l"], 0])
+A["trunk_tibia_points"] = side_ok(["shoulder", "hip", "knee", "ankle"])
+A["heel_points"] = side_ok(["heel", "foot", "ankle"])
+A["all_side_points"] = side_ok(["shoulder", "hip", "knee", "ankle", "heel", "foot", "ear"])
+A["resolution"] = A["width"].astype(str) + "x" + A["height"].astype(str)
+checks = ["person_found", "trunk_tibia_points", "heel_points", "all_side_points"]
+fail = 1 - A.groupby(["resolution", "class"])[checks].mean()
+fail.insert(0, "n", A.groupby(["resolution", "class"]).size())
+print("Taux d'ÉCHEC (part des images où la personne ou les points ne sont pas détectés) :")
+print(fail.round(3).to_string())
+print("\nPar classe seulement :")
+print((1 - A.groupby("class")[checks].mean()).round(3).to_string())
+print("\nPar résolution seulement :")
+print((1 - A.groupby("resolution")[checks].mean()).round(3).to_string())
+fail.to_csv(OUT / "teng_detection_failure.csv")
+
+print("\n=== 6) A : phase du mouvement (descriptif, aucune règle) ===")
+# Angle du genou (hanche-genou-cheville) du côté le plus visible : 180° = debout.
+left = vis[:, [LM["hip_l"], LM["knee_l"], LM["ankle_l"]]].mean(1) >= \
+    vis[:, [LM["hip_r"], LM["knee_r"], LM["ankle_r"]]].mean(1)
+
+
+def pt(name: str) -> np.ndarray:
+    return np.where(left[:, None], xy[:, LM[f"{name}_l"]], xy[:, LM[f"{name}_r"]])
+
+
+A["knee_angle"] = angle_3pts(pt("hip"), pt("knee"), pt("ankle"))
+A.loc[~A["trunk_tibia_points"], "knee_angle"] = np.nan
+A["phase"] = pd.cut(A["knee_angle"], [0, 90, 120, 150, 181], right=False,
+                    labels=["< 90° (bas)", "90-120°", "120-150°", ">= 150° (quasi debout)"])
+print("Répartition des images par angle du genou (lignes = classes) :")
+print(pd.crosstab(A["class"], A["phase"], normalize="index").round(2).to_string())
+print(A.groupby("class")["knee_angle"].describe()[["count", "25%", "50%", "75%"]].round(0))
+A.drop(columns="md5").to_csv(OUT / "teng_images.csv", index=False)
+
+print("\n=== 7) B (Dai) : v1 et v2, fichiers, sujets, doublons ===")
 NAME = re.compile(r"^p(?P<subject>\d+)_(?P<cls>[A-Za-z]+)_(?P<trial>\d+)\.csv$")
-rows = []
-for f in sorted(B_DIR.rglob("*.csv")):
-    rel = f.relative_to(B_DIR)
-    m = NAME.match(f.name)
-    df = pd.read_csv(f)
-    coords = df.filter(regex=r"^[xyzv]_\d+$")
-    rows.append({
-        "zip": rel.parts[0], "folder": rel.parts[1], "file": f.name,
-        "subject": m["subject"] if m else None, "cls": m["cls"] if m else None,
-        "trial": m["trial"] if m else None,
-        "n_frames": len(df), "n_cols": df.shape[1],
-        "other_cols": ",".join(c for c in df.columns if c not in coords.columns),
-        "frame_first": df["Frame"].iloc[0] if "Frame" in df else None,
-        "frame_step_unique": ",".join(map(str, sorted(df["Frame"].diff().dropna().unique())))
-        if "Frame" in df else None,
-        "x_min": df.filter(regex=r"^x_").min().min(), "x_max": df.filter(regex=r"^x_").max().max(),
-        "y_min": df.filter(regex=r"^y_").min().min(), "y_max": df.filter(regex=r"^y_").max().max(),
-        "z_min": df.filter(regex=r"^z_").min().min(), "z_max": df.filter(regex=r"^z_").max().max(),
-        "v_min": df.filter(regex=r"^v_").min().min(), "v_max": df.filter(regex=r"^v_").max().max(),
-        "n_missing": int(coords.isna().sum().sum()),
-        "md5": md5(f),
+
+
+def describe_b(root: Path) -> pd.DataFrame:
+    rows = []
+    for f in sorted(root.rglob("*.csv")):
+        rel = f.relative_to(root)
+        m = NAME.match(f.name)
+        df = pd.read_csv(f)
+        coords = df.filter(regex=r"^[xyzv]_\d+$")
+        row = {"zip": rel.parts[0], "folder": rel.parts[1], "file": f.name, "path": str(f),
+               "subject": m["subject"] if m else None, "cls": m["cls"] if m else None,
+               "trial": m["trial"] if m else None, "n_frames": len(df), "n_cols": df.shape[1],
+               "other_cols": ",".join(c for c in df.columns if c not in coords.columns),
+               "frame_first": int(df["Frame"].iloc[0]),
+               "frame_steps": ",".join(map(str, sorted(df["Frame"].diff().dropna().unique()))),
+               "n_missing": int(coords.isna().sum().sum()), "md5": md5(f)}
+        for k in "xyzv":
+            values = df.filter(regex=fr"^{k}_\d+$").to_numpy()
+            row[f"{k}_min"], row[f"{k}_max"] = np.nanmin(values), np.nanmax(values)
+        rows.append(row)
+    return pd.DataFrame(rows)
+
+
+versions = {"v1": ext / config["external"]["dai_squat"]["v1"]["dir"],
+            "v2": ext / config["external"]["dai_squat"]["dir"]}
+tables = {}
+for v, root in versions.items():
+    raw = describe_b(root)
+    copies = raw.groupby("md5")["zip"].nunique()
+    conflict = raw.groupby(["cls", "subject", "trial"])["md5"].nunique()
+    t = raw.drop_duplicates("md5").reset_index(drop=True)
+    tables[v] = t
+    print(f"\n--- {v} : {root}")
+    print(f"{len(raw)} CSV extraits ; {int((copies > 1).sum())} contenus présents dans plusieurs "
+          f"zip (copies identiques) ; {len(t)} fichiers uniques ; noms hors motif : "
+          f"{t['subject'].isna().sum()} ; même nom mais contenu différent : {(conflict > 1).sum()}")
+    print(t.groupby("cls").agg(fichiers=("file", "size"), sujets=("subject", "nunique"),
+                               essais_min=("subject", lambda s: s.value_counts().min()),
+                               essais_max=("subject", lambda s: s.value_counts().max()),
+                               images_min=("n_frames", "min"),
+                               images_med=("n_frames", "median"),
+                               images_max=("n_frames", "max")).to_string())
+    subj = {c: sorted(g["subject"].unique()) for c, g in t.groupby("cls")}
+    for c, s in subj.items():
+        print(f"  {c:9s} sujets : {s}")
+    every = set.intersection(*map(set, subj.values()))
+    print(f"  sujets distincts : {t['subject'].nunique()} ; présents dans les 3 classes : "
+          f"{len(every)} {sorted(every)}")
+    print(f"  colonnes : {t['n_cols'].value_counts().to_dict()} ; autres que x/y/z/v : "
+          f"{t['other_cols'].value_counts().to_dict()} ; valeurs manquantes : "
+          f"{t['n_missing'].sum()}")
+    print(f"  Frame : premier numéro {t['frame_first'].value_counts().head(5).to_dict()} ; "
+          f"pas {t['frame_steps'].value_counts().to_dict()}")
+    print("  plages : " + " ; ".join(f"{k} [{t[f'{k}_min'].min():.2f}, {t[f'{k}_max'].max():.2f}]"
+                                     for k in "xyzv"))
+    t.drop(columns="md5").to_csv(OUT / f"dai_files_{v}.csv", index=False)
+
+v1, v2 = tables["v1"], tables["v2"]
+key = ["cls", "subject", "trial"]
+both = v1.merge(v2, on=key, suffixes=("_v1", "_v2"))
+print("\n--- Comparaison v1 / v2 (même classe, sujet, essai)")
+print(f"Fichiers communs : {len(both)} ; contenu identique : "
+      f"{int((both['md5_v1'] == both['md5_v2']).sum())} ; nombre d'images identique : "
+      f"{int((both['n_frames_v1'] == both['n_frames_v2']).sum())} ; seulement en v1 : "
+      f"{len(v1) - len(both)} ; seulement en v2 : {len(v2) - len(both)}")
+print(f"Sujets v1 absents de v2 : {sorted(set(v1['subject']) - set(v2['subject']))}")
+print(f"Sujets nouveaux en v2 : {sorted(set(v2['subject']) - set(v1['subject']))}")
+
+print("\n=== 8) B (v2) : géométrie et contenu de chaque fichier ===")
+geo = []
+for r in v2.itertuples():
+    xn, vv, _ = read_normalized(Path(r.path))
+    hip_y = (xn[:, LM["hip_l"], 1] + xn[:, LM["hip_r"], 1]) / 2
+    amp = hip_y.max() - hip_y.min()
+    peaks, _ = find_peaks(hip_y, prominence=0.3 * amp)
+    geo.append({
+        "cls": r.cls, "subject": r.subject, "file": r.file, "n_bottoms": len(peaks),
+        "starts_up": hip_y[0] < hip_y.min() + 0.2 * amp,
+        "ends_up": hip_y[-1] < hip_y.min() + 0.2 * amp,
+        "nose_above_ankles": float(np.mean(xn[:, LM["nose"], 1] < xn[:, LM["ankle_l"], 1])),
+        "vis_left_leg": float(np.median(vv[:, [LM["hip_l"], LM["knee_l"], LM["ankle_l"]]])),
+        "vis_right_leg": float(np.median(vv[:, [LM["hip_r"], LM["knee_r"], LM["ankle_r"]]])),
+        # Écart gauche/droite des hanches en x, rapporté à la hauteur du tronc en y :
+        # petit en vue de profil (indicatif : dépend du rapport largeur/hauteur)
+        "hip_sep_x": float(np.median(np.abs(xn[:, LM["hip_l"], 0] - xn[:, LM["hip_r"], 0]))),
+        "torso_y": float(np.median(np.abs(xn[:, LM["shoulder_l"], 1] - xn[:, LM["hip_l"], 1]))),
+        "aspect_est": estimate_aspect(xn, vv),
+        **{f"instab_{name}": length_instability(xn, vv, a)
+           for name, a in [("9:16", 9 / 16), ("3:4", 3 / 4), ("1:1", 1.0),
+                           ("4:3", 4 / 3), ("16:9", 16 / 9)]},
     })
-B = pd.DataFrame(rows)
-B.drop(columns="md5").to_csv(OUT / "dai_files.csv", index=False)
-print(f"Dossier : {B_DIR}")
-print(f"{len(B)} fichiers CSV (tous zip confondus). Noms hors motif p<sujet>_<classe>_<essai> : "
-      f"{B['subject'].isna().sum()}")
-print(B.groupby(["zip", "folder"]).size().to_string())
+G = pd.DataFrame(geo)
+G["visible_side"] = np.where(G["vis_left_leg"] >= G["vis_right_leg"], "gauche", "droite")
+G.to_csv(OUT / "dai_v2_geometry.csv", index=False)
+print("Points bas (répétitions) par fichier :", G["n_bottoms"].value_counts().to_dict())
+print(f"Commence debout : {G['starts_up'].mean():.0%} ; finit debout : {G['ends_up'].mean():.0%}")
+print(f"Nez au-dessus des chevilles (y vers le bas) : {G['nose_above_ankles'].mean():.0%} "
+      "des images")
+print("Côté le plus visible (jambe), par classe :")
+print(pd.crosstab(G["cls"], G["visible_side"]).to_string())
+print("Côté le plus visible, par sujet ayant plusieurs classes :")
+multi = G.groupby("subject")["cls"].nunique()
+print(pd.crosstab([G["subject"]], [G["cls"], G["visible_side"]])
+      .loc[multi[multi > 1].index].to_string())
+print(f"Écart des hanches en x / hauteur du tronc en y (médiane) : "
+      f"{(G['hip_sep_x'] / G['torso_y']).median():.2f}")
 
-print("\n=== 6) B : doublons entre les zip (avant de dédoublonner) ===")
-same = B.groupby("file")["md5"].nunique()
-print(f"Fichiers présents dans plusieurs zip : {(B['file'].value_counts() > 1).sum()} ; "
-      f"dont contenu différent : {(same > 1).sum()}")
-B = B.drop_duplicates("md5").reset_index(drop=True)
-print(f"Après suppression des copies identiques : {len(B)} fichiers uniques")
+print("\n=== 9) B (v2) : quel rapport largeur/hauteur ? (hypothèses testées) ===")
+index = pd.read_csv(ROOT / config["dataset"]["index_csv"], dtype={"subject": str})
+val = []
+for r in index[index["view"] == "side"].itertuples():
+    f = ROOT / "outputs" / "landmarks" / f"{Path(r.filename).stem}.npz"
+    if f.exists():
+        p = PoseSeries.load(f)
+        val.append((p.width / p.height,
+                    estimate_aspect(p.xy / np.array([p.width, p.height]), p.vis)))
+val = np.array(val)
+err = val[:, 1] - val[:, 0]
+print("Validation sur le dataset Mendeley (résolution connue, vue de profil) : "
+      f"{len(val)} vidéos ; vrai rapport {np.unique(val[:, 0].round(4))} ; erreur médiane "
+      f"{np.median(err):+.3f}, min {err.min():+.3f}, max {err.max():+.3f}")
+print("Estimation sur B v2 (rapport qui stabilise le plus cuisse + tibia) :")
+print(G.groupby("cls")["aspect_est"].describe()[["count", "25%", "50%", "75%"]].round(2))
+print(f"Toutes classes : médiane {G['aspect_est'].median():.2f}, quantiles 10-90 % "
+      f"{np.round(G['aspect_est'].quantile([.1, .9]).to_numpy(), 2)}")
+print("Instabilité médiane des longueurs selon l'hypothèse (plus petit = plus plausible) :")
+print(G[[c for c in G if c.startswith("instab_")]].median().round(3).to_string())
+print(f"(grille testée : {ASPECT_GRID.min()} à {ASPECT_GRID.max()})")
 
-print("\n=== 4 bis) B : sujets et essais par classe (fichiers uniques) ===")
-print(B.groupby("cls").agg(fichiers=("file", "size"), sujets=("subject", "nunique"),
-                           essais_par_sujet_min=("subject", lambda s: s.value_counts().min()),
-                           essais_par_sujet_max=("subject", lambda s: s.value_counts().max()))
-      .to_string())
-subjects = {c: set(g["subject"]) for c, g in B.groupby("cls")}
-all_subjects = set().union(*subjects.values())
-print(f"Sujets distincts (tous fichiers) : {len(all_subjects)} -> {sorted(all_subjects)}")
-for c, s in subjects.items():
-    print(f"  {c:12s} : {len(s):2d} sujets {sorted(s)}")
-print(f"Sujets présents dans les 3 classes : {len(set.intersection(*subjects.values()))}")
-
-print("\n=== 5) B : colonnes, plages, nombre d'images, valeurs manquantes ===")
-print(f"Nombre de colonnes : {B['n_cols'].value_counts().to_dict()}")
-print(f"Colonnes autres que x/y/z/v : {B['other_cols'].value_counts().to_dict()}")
-print("Colonnes d'angles (hanche/genou annoncés sur Zenodo) : "
-      f"{'oui' if B['other_cols'].str.contains('angle|hip|knee', case=False).any() else 'AUCUNE'}")
-print(f"Première valeur de Frame : {B['frame_first'].value_counts().to_dict()} ; "
-      f"pas entre images : {B['frame_step_unique'].value_counts().to_dict()}")
-print("Images par fichier, par classe :")
-print(B.groupby("cls")["n_frames"].describe()[["min", "50%", "max"]].to_string())
-for k in "xyzv":
-    print(f"  {k} : min {B[f'{k}_min'].min():.3f}  max {B[f'{k}_max'].max():.3f}")
-print(f"Valeurs manquantes (x/y/z/v) : {B['n_missing'].sum()}")
-
-print("\n=== 7) Non documenté / non vérifiable ===")
-print("Voir la synthèse dans le message de fin d'étape et docs/DATA_LICENSES.md.")
+print("\n=== 10) Non documenté / non vérifiable ===")
+print("Synthèse dans le message de fin d'étape et docs/DATA_LICENSES.md.")

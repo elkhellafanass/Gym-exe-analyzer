@@ -314,6 +314,120 @@ dataset tolère des squats bien moins profonds que Myer. Le meilleur chiffre (di
    selon l'annotateur. Les comparaisons par vue ne sont pas concluantes.
 10. **Un seul annotateur, non expert**, sans mesure de reproductibilité (pas de deuxième annotation).
 
+## Validation externe (en cours, étapes 1-2 faites le 13/10/2026)
+
+Deux jeux ouverts (CC BY 4.0), jamais commités, extraits hors du dépôt (`config.yaml` → `external`).
+Attribution et écarts vérifiés : `docs/DATA_LICENSES.md`. Description : `python scripts/inspect_external.py`
+(sorties dans `outputs/external/`, planches d'images dans `Datasets\extracted\_inspection\`, hors du dépôt).
+
+### Étape 2 : compatibilité avec le pipeline (`src/angles.py`, `src/rules.py`)
+
+**A. Teng 2025 (3806 images de profil, Good / Bad Back / Bad Heel)**
+
+Ce qui change dans le pipeline :
+- `src/pose.py` : extraction image par image (`extract_pose_images`, mode IMAGE, sans suivi). Même choix de
+  personne et mêmes coordonnées en pixels. Le nettoyage temporel (interpolation, lissage) ne s'applique pas.
+- `src/angles.py` : utilisable tel quel. La résolution de chaque image est connue, donc les angles sont corrects.
+- `src/reps.py` : inapplicable (pas de répétition). Toutes les règles sont définies sur une répétition
+  (`window`, `reference: start`, défaut retenu sur ≥ 2 répétitions). Les appliquer à **une image** est une
+  adaptation à déclarer, pas la règle d'origine.
+
+| Règle | Évaluable sur A ? | Pourquoi |
+|---|---|---|
+| `trunk_vs_tibia` | **oui, avec adaptation** (une image au lieu de la moitié basse d'une répétition) | angles à la verticale, mesurables sur une image ; seule règle liée à une classe (Bad Back). Mais Bad Back = « spinal misalignment » selon Zenodo : notre règle mesure l'**inclinaison** du tronc par rapport au tibia, pas la courbure du dos (MediaPipe n'a aucun point sur la colonne). C'est un indicateur approché |
+| `heel_rise` | **non** | la règle mesure la montée du talon par rapport à la posture debout du début de répétition ; aucune image debout n'est associée. Une hauteur absolue ou l'angle du pied serait un **nouvel** indicateur, non sourcé (l'angle du pied a déjà été écarté en phase A, p = 0,17). La classe Bad Heel ne peut donc pas être évaluée par nos règles |
+| `depth` | calculable, mais **sans label correspondant** | aucune classe de A n'est définie par la profondeur ; on ne sait pas si l'image est le point bas. Taux de signalement par classe seulement (descriptif) |
+| `head_position` | **non** | référence = posture debout du début de répétition |
+| `knee_valgus`, `hip_shift` | **non** | règles de face ; A est de profil |
+| tempo, classifieur | **non** | pas de répétition ni de durée ; le classifieur utilise les médianes par répétition et le tempo |
+
+**Phase du mouvement** (angle du genou, descriptif) : presque toutes les images sont prises près du point bas.
+Genou < 90° pour 95 % des Good, 98 % des Bad Heel, mais seulement 66 % des Bad Back (31 % entre 90° et 120°).
+Médiane : Good 70°, Bad Heel 59°, Bad Back 84°. **Les Bad Back sont moins profonds** : comme l'inclinaison du tronc
+dépend de la profondeur, c'est un facteur de confusion pour `trunk_vs_tibia`.
+
+**Détection MediaPipe** (points nécessaires visibles à ≥ 0,5) : les échecs dépendent de la classe plus que de
+la résolution. Personne non détectée : Bad Back 2,6 %, Bad Heel 0,1 %, Good 0 %. Points du profil incomplets : Bad
+Back 5,6 %. Aucun échec en 720×720 ni en 3456×3456 ; les échecs (1,1 à 1,6 %) se concentrent en 1072×1080 et
+1080×1080, presque tous chez les Bad Back. Les postures très penchées sont plus difficiles à détecter. Ces images
+seront comptées comme « non mesurables », jamais retirées en silence.
+
+**Lien résolution / classe (limite) :** 1080×1080 = 257 Bad Back, 102 Bad Heel, 17 Good ; 1072×1080 = 828, 859,
+1038. Nos règles sont figées, donc elles ne peuvent pas « apprendre » la résolution. Mais la résolution suit la
+prise de vue (cadrage, distance), qui peut changer la mesure.
+
+**Corrélation entre images voisines : proposition.**
+- Constat : les fichiers sont numérotés dans l'ordre du temps. Deux images voisines diffèrent de 0,004 en
+  moyenne (vignettes 32×32), contre 0,187 pour deux images tirées au hasard. Ce sont des images de vidéos : 3806
+  images ne sont pas 3806 observations.
+- **Blocs consécutifs** (nouvelle image quand la différence dépasse un seuil) : 248, 119, 70 ou 53 blocs pour un
+  seuil de 0,02, 0,03, 0,05 ou 0,08. Ce découpage est fragile : dans `test/Bad Back`, la numérotation alterne entre
+  deux prises de vue (blocs d'une image), et une même prise de vue est coupée en plusieurs blocs.
+- **Scènes** (regroupement par ressemblance globale, vignette couleur 16×16, lien moyen) : avec 10 scènes, 8
+  contiennent les 3 classes. À l'œil, une scène ≈ une personne dans un lieu avec une tenue (planche
+  `A_teng_scenes_10.jpg`), avec des erreurs : 2 scènes mélangent deux personnes.
+- **Proposition (à figer à l'étape 3) :** unité statistique = la scène (10 scènes). IC par bootstrap **sur les
+  scènes**, avec une analyse de sensibilité à 6, 8, 12, 15 scènes et aux blocs consécutifs (seuil 0,05). Les
+  effectifs en images sont donnés pour information, sans IC au niveau de l'image.
+- **Ce qui reste impossible :** un IC par sujet (aucun identifiant) ; vérifier qu'une scène correspond à un sujet ;
+  savoir combien de personnes différentes il y a (à l'œil : 8 à 10 tenues ou lieux, pas un comptage fiable) ;
+  vérifier l'indépendance entre train et test (les mêmes scènes sont dans les deux, donc on les fusionne).
+
+**B. Dai 2026 v2 (344 fichiers CSV uniques, 28 sujets)**
+
+Repère et unités :
+- coordonnées MediaPipe **normalisées** : x divisé par la largeur, y par la hauteur de la vidéo ; y vers le bas
+  (nez au-dessus des chevilles sur 100 % des images), comme dans le pipeline. `v` = visibilité (même seuil 0,5) ;
+  `z` n'est pas utilisé ;
+- **le pipeline travaille en pixels** (x et y à la même échelle). Il faut donc multiplier x par le rapport
+  largeur/hauteur, qui n'est pas documenté (`src/external.py`, `to_pose_series(..., aspect=...)`, jamais choisi
+  en silence) ;
+- **un fichier = une répétition** (343 fichiers sur 344 ont un seul point bas ; 99 % commencent et 97 % finissent
+  debout). La règle « défaut retenu sur ≥ 2 répétitions » ne peut pas se déclencher sur un fichier ;
+- fréquence d'images inconnue : seuls les **durées** (tempo) en dépendent. Le lissage (7 images) et le
+  comblement des trous (3 images) sont définis en images, donc applicables, mais leur durée réelle est inconnue.
+  5 fichiers ont des trous dans la numérotation (images sautées) ;
+- vue : probablement de profil (écart des hanches en x faible devant la hauteur du tronc, indicatif). Le côté
+  visible dépend de la classe : jambe droite pour les 10 GoodMorning et 32 Shallow sur 38, partagé pour Standard
+  (161 gauche, 135 droite). Pour un même sujet, les classes sont parfois filmées de côtés opposés : Shallow à droite
+  et Standard à gauche pour les sujets 03, 05 et 06 ; GoodMorning à droite et le reste à gauche pour le sujet 01.
+  **Les prises de vue diffèrent selon la classe** : c'est un facteur de confusion possible.
+
+**Rapport largeur/hauteur : hypothèses testées.**
+- Test : la longueur réelle de la cuisse et du tibia ne change pas pendant le squat ; on cherche le rapport qui
+  la rend la plus stable (`src/external.py`).
+- **Validation sur Mendeley** (résolution connue, 50 vidéos de profil, vrai rapport 0,5625) : erreur médiane
+  +0,05 (de −0,08 à +0,17). La méthode **échoue de face et en diagonale** (+0,7 à +0,9), car le mouvement sort du
+  plan de l'image.
+- Résultat sur B : rapport estimé médian **2,19** (10-90 % : 1,91 à 2,69) ; GoodMorning 1,91, Standard 2,17,
+  Shallow 2,46 (dispersion forte, jusqu'à 3,9). Instabilité des longueurs : 9:16 → 0,53 ; 3:4 → 0,45 ; 1:1 → 0,36 ;
+  4:3 → 0,25 ; 16:9 → **0,14** (le plus plausible des formats courants).
+- Lecture : les formats **portrait (9:16, 3:4) sont exclus**. **16:9 (paysage) est l'hypothèse la plus plausible,
+  mais pas confirmée** : aucun format courant ne dépasse 1,78, donc les valeurs au-delà indiquent que l'hypothèse
+  de la méthode (mouvement dans le plan, vue de profil pure) n'est pas respectée, comme en vue diagonale sur
+  Mendeley. Le biais varie avec la classe (Shallow plus élevé).
+- Proposition (à figer à l'étape 3) : hypothèse principale 16:9, et analyse de sensibilité à 4:3 et 1:1 pour
+  toute règle dépendant du rapport. Une conclusion n'est retenue que si elle tient sous les trois hypothèses.
+
+| Règle | Évaluable sur B ? | Dépend du rapport largeur/hauteur ? |
+|---|---|---|
+| `depth` | **oui** ; correspond à la classe Shallow | **non** : la règle ne regarde que le **signe** de (y hanche − y genou), seuil 0. Diviser par la longueur de cuisse ne change pas le signe. Évaluable sans hypothèse |
+| `trunk_vs_tibia` | oui ; correspond le mieux à GoodMorning (tronc très penché) | **oui** : angles à la verticale. Sous hypothèses seulement. GoodMorning = 1 sujet : pas de conclusion possible |
+| `heel_rise` | mesurable (référence = début de la répétition, présent dans chaque fichier), **sans classe correspondante** | **oui** (longueur du pied surtout horizontale). Seulement le taux de signalement sur Standard (fausses alertes probables), sous hypothèses |
+| `head_position` | mesurable, sans classe correspondante | **oui** (angle). Taux de signalement seulement |
+| `knee_valgus`, `hip_shift` | **non** | règles de face ; B est de profil |
+| tempo, classifieur | **non** | fréquence d'images inconnue ; le classifieur a besoin du tempo |
+
+**Éléments également prévus (pas encore commencés) :** un second annotateur en aveugle sur les 50 vidéos de
+profil (kappa inter-juges) et `scripts/sensitivity_synthetic.py` (sensibilité des règles sur des squats
+synthétiques).
+
+Niveau de décision : une répétition par fichier. Deux options à figer à l'étape 3 : (a) verdict **par
+répétition** (la règle telle qu'appliquée à chaque répétition, sans le critère « ≥ 2 répétitions ») ; (b)
+regrouper les fichiers d'un même sujet et d'une même classe et appliquer « ≥ 2 répétitions ». Effectifs v2 :
+Standard 296 fichiers / 28 sujets, Shallow 38 / 6 sujets (01 à 06, qui ont aussi du Standard), GoodMorning 10 /
+1 sujet.
+
 ## Questions probables du jury
 
 **1. Votre modèle fait-il mieux que le hasard ?**

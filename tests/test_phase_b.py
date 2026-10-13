@@ -89,3 +89,18 @@ def test_features_par_vue():
                                             "head_position", "tempo_ratio"]
     assert feature_names("front", RULES) == ["knee_valgus", "hip_shift", "tempo_ratio"]
     assert feature_names("diagonal", RULES) == feature_names("front", RULES)
+
+
+def test_rapport_largeur_hauteur_retrouve_sur_squat_synthetique():
+    """Coordonnées normalisées d'un squat de profil filmé en 16:9 -> on retrouve ~1,78."""
+    from src.external import estimate_aspect, to_pose_series
+    from tests.synthetic import phase_signal, squat_pose
+
+    pose = squat_pose(phase_signal(n_reps=3))
+    width, height = 1920.0, 1080.0
+    xy_norm = pose.xy / np.array([width, height])
+    vis = np.ones(pose.vis.shape)
+    assert abs(estimate_aspect(xy_norm, vis) - width / height) < 0.03
+    # le retour en pixels respecte l'hypothèse donnée
+    back = to_pose_series(xy_norm, vis, aspect=width / height, fps=30)
+    assert back.width / back.height == pytest.approx(width / height, abs=0.01)

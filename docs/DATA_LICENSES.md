@@ -55,34 +55,49 @@ extraites de vidéos ?) et la règle du découpage train/test.
 **Personnes identifiables : oui.** Les visages sont visibles (vérifié sur une planche de 24 images, gardée hors du
 dépôt). Comme pour le dataset Mendeley, aucune image n'est publiée, et la clause CC BY 4.0 2(b)(1) s'applique.
 
-### B. Dai 2026 : points MediaPipe (CSV)
+### B. Dai 2026 : points MediaPipe (CSV), deux versions
 
-| Champ | Valeur |
-|---|---|
-| Attribution | Dai, Zhiqiang (2026). *Dataset for: Non-standard Squat Posture Detection Method Using Human Skeleton* [Data set]. Zenodo. https://doi.org/10.5281/zenodo.18859797 |
-| DOI de la version utilisée | [10.5281/zenodo.18859797](https://doi.org/10.5281/zenodo.18859797) (concept : 10.5281/zenodo.18859796) |
-| Date de publication | 04/03/2026 |
-| Licence | CC BY 4.0 (champ licence de Zenodo) : https://creativecommons.org/licenses/by/4.0/ |
-| Fichiers | `00_Standard.zip` (MD5 `7d7c2c037139fbdbd58121f8cf17742d`), `01_Err_Shallow.zip` (`9bffec67df8ae2f8f3e6b1eb5cb2c63c`), `02_Err_GoodMorning.zip` (`9f0d0c36cfd8b849f04f6fbb0899e9f8`) (vérifiés) |
-| Date de consultation | 13/10/2026 |
-| Modifications | **données transformées** (calcul d'angles et d'indicateurs à partir des points fournis) |
+**Version utilisée pour l'évaluation : v2 (13/04/2026).** La v1 est gardée seulement pour comparaison.
 
-Description Zenodo (résumé) : coordonnées 2D de points du squelette et angles de hanche et de genou, extraits par
-MediaPipe ; 3 postures (squat standard, squat peu profond, « good morning ») ; 22 sujets ; vidéos brutes exclues
-pour protéger la vie privée. Aucune personne n'est identifiable dans les fichiers (coordonnées seulement).
+| Champ | v2 (UTILISÉE) | v1 (comparaison) |
+|---|---|---|
+| Attribution | Dai, Zhiqiang (2026). *Dataset for: Non-standard Squat Posture Detection Method Using Human Skeleton* [Data set]. Zenodo. https://doi.org/10.5281/zenodo.19550070 | idem, https://doi.org/10.5281/zenodo.18859797 |
+| DOI | [10.5281/zenodo.19550070](https://doi.org/10.5281/zenodo.19550070) | [10.5281/zenodo.18859797](https://doi.org/10.5281/zenodo.18859797) |
+| DOI concept (toutes versions) | 10.5281/zenodo.18859796 | 10.5281/zenodo.18859796 |
+| Date de publication | 13/04/2026 | 04/03/2026 |
+| Licence | CC BY 4.0 (champ licence de Zenodo) : https://creativecommons.org/licenses/by/4.0/ | CC BY 4.0 |
+| Sujets annoncés sur Zenodo | 35 | 22 |
+| Fichiers téléchargés | `00_Standard_v2.zip` (28 027 541 o, MD5 `f7b318a7a3d7ac0b9d1838da55d0deef`), `01_Err_Shallow_v2.zip` (32 732 769 o, `9a77b1856f0bd604421e9e40c640b8ec`), `02_Err_GoodMorning_v2.zip` (905 665 o, `5c9667ae5cfb66550b2d946ae4acfee7`) : tailles et MD5 identiques à Zenodo. Renommés `_v2` par l'auteur du projet. `all-kinds-deep-learning.zip` et `our-result.zip` non téléchargés | `00_Standard.zip` (`7d7c2c037139fbdbd58121f8cf17742d`), `01_Err_Shallow.zip` (`9bffec67df8ae2f8f3e6b1eb5cb2c63c`), `02_Err_GoodMorning.zip` (`9f0d0c36cfd8b849f04f6fbb0899e9f8`) : vérifiés |
+| Dossier d'extraction (hors dépôt) | `extracted\B_dai_squat_v2\` | `extracted\B_dai_squat\` |
+| Date de consultation | 13/10/2026 | 13/10/2026 |
+| Modifications | **données transformées** (calcul d'angles et d'indicateurs à partir des points fournis) | idem |
 
-**Attention : la version utilisée n'est pas la dernière.** Une version plus récente existe : DOI
-10.5281/zenodo.19550070, publiée le 13/04/2026, CC BY 4.0, qui annonce 35 sujets et d'autres fichiers (zip de
-tailles différentes, plus `all-kinds-deep-learning.zip` et `our-result.zip`). Elle n'a pas été téléchargée.
+Description Zenodo (résumé, identique dans les deux versions à part le nombre de sujets) : coordonnées 2D de points
+du squelette et angles de hanche et de genou, extraits par MediaPipe ; 3 postures (squat standard, squat peu
+profond, « good morning ») ; vidéos brutes exclues pour protéger la vie privée. Aucune personne n'est identifiable
+dans les fichiers (coordonnées seulement).
 
-**Écarts entre la description et les fichiers (vérifiés par `scripts/inspect_external.py`) :**
-- aucune colonne d'angle : seulement `Frame` et 33 points × (x, y, z, visibilité) ;
-- 17 sujets distincts dans les fichiers (numéros 01 à 18, sans 14), et non 22 ;
-- `02_Err_GoodMorning.zip` contient aussi des copies identiques (même MD5) des fichiers Standard et Shallow.
+**Ce que contiennent vraiment les fichiers (vérifié par `scripts/inspect_external.py`) :**
+
+| | v1 | v2 |
+|---|---|---|
+| CSV extraits / fichiers uniques (copies identiques retirées) | 442 / 226 | 650 / 344 |
+| Sujets distincts (annoncés) | 17 (22) | **28 (35)** : 01 à 29 sans 14 |
+| Standard : fichiers / sujets | 193 / 17 | 296 / 28 |
+| Shallow : fichiers / sujets | 23 / 4 | 38 / 6 |
+| GoodMorning : fichiers / sujets | 10 / 1 | **10 / 1** (sujet 01 seulement) |
+| Colonnes | `Frame` + 33 × (x, y, z, v) | idem, **aucune colonne d'angle** |
+| Images par fichier | 56 à 133 | 49 à 133 |
+| Numérotation `Frame` avec trous | 0 fichier | 5 fichiers |
+
+- Les 226 fichiers de la v1 sont **tous présents à l'identique** dans la v2 (même MD5) ; la v2 ajoute 118 fichiers
+  et les sujets 19 à 29 (Standard seulement, plus les sujets 05-06 en Shallow).
+- Les zip se recoupent : `01_Err_Shallow_v2.zip` contient aussi des copies identiques de Standard et GoodMorning
+  (v1 : c'était `02_Err_GoodMorning.zip`). Les copies sont retirées par empreinte MD5.
 
 **Ce que la page ne documente pas :** la fréquence d'images, la résolution et l'orientation des vidéos d'origine
 (indispensables pour remettre x et y à la même échelle), l'angle de vue de la caméra, la version de MediaPipe, le
-protocole d'étiquetage et le consentement.
+protocole d'étiquetage, le consentement, et pourquoi les fichiers comptent moins de sujets qu'annoncé.
 
 ## 2. Modèle de détection de pose
 

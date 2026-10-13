@@ -171,8 +171,13 @@ external:
     license: "CC BY 4.0"
     accessed: "2026-10-13"
   dai_squat:
-    dir: "B_dai_squat"
-    citation: "Dai, Zhiqiang (2026). Dataset for: Non-standard Squat Posture Detection Method Using Human Skeleton [Data set]. Zenodo. https://doi.org/10.5281/zenodo.18859797"
-    doi: "10.5281/zenodo.18859797"
+    # Version UTILISÉE pour l'évaluation : v2 (13/04/2026, 35 sujets annoncés).
+    dir: "B_dai_squat_v2"
+    citation: "Dai, Zhiqiang (2026). Dataset for: Non-standard Squat Posture Detection Method Using Human Skeleton [Data set]. Zenodo. https://doi.org/10.5281/zenodo.19550070"
+    doi: "10.5281/zenodo.19550070"
     license: "CC BY 4.0"
     accessed: "2026-10-13"
+    # Version précédente (04/03/2026), gardée pour comparaison seulement.
+    v1:
+      dir: "B_dai_squat"
+      doi: "10.5281/zenodo.18859797"

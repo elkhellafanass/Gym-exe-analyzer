@@ -159,6 +159,41 @@ def extract_pose(video_path: Path, model_path: Path, max_people: int = 3,
                       float(fps), width, height)
 
 
+def extract_pose_images(image_paths: list[Path], model_path: Path, max_people: int = 3,
+                        progress=None) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """Lance MediaPipe sur des IMAGES indépendantes (jeu externe sans vidéo).
+
+    Mode IMAGE : aucun suivi d'une image à l'autre, chaque image est traitée
+    seule (contrairement à extract_pose). Même choix de personne (la plus
+    grande) et mêmes coordonnées en pixels.
+    Renvoie (xy (n, 33, 2) en pixels, vis (n, 33), tailles (n, 2) = largeur, hauteur).
+    Image sans personne détectée -> NaN et visibilité 0.
+    """
+    options = PoseLandmarkerOptions(
+        base_options=BaseOptions(model_asset_path=str(model_path)),
+        running_mode=RunningMode.IMAGE,
+        num_poses=max_people,
+    )
+    xy = np.full((len(image_paths), 33, 2), np.nan)
+    vis = np.zeros((len(image_paths), 33))
+    sizes = np.zeros((len(image_paths), 2), dtype=int)
+    with PoseLandmarker.create_from_options(options) as landmarker:
+        for i, path in enumerate(image_paths):
+            frame = cv2.imdecode(np.fromfile(str(path), dtype=np.uint8), cv2.IMREAD_COLOR)
+            height, width = frame.shape[:2]
+            sizes[i] = width, height
+            image = mp.Image(image_format=mp.ImageFormat.SRGB,
+                             data=cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
+            result = landmarker.detect(image)
+            if result.pose_landmarks:
+                p = _pick_person(result.pose_landmarks)
+                xy[i] = [[q.x * width, q.y * height] for q in p]
+                vis[i] = [q.visibility for q in p]
+            if progress:
+                progress(i + 1, len(image_paths))
+    return xy, vis, sizes
+
+
 def clean_pose(series: PoseSeries, min_visibility: float, max_gap_frames: int,
                smooth_window: int, smooth_polyorder: int) -> PoseSeries:
     """Nettoie les trajectoires avant de calculer des angles.
