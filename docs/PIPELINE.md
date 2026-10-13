@@ -284,8 +284,8 @@ dataset », pas « sourcés », et ils ne vont pas dans `config.yaml`.** Ils son
 | Toutes | ≥ 1 règle | 0,63 [0,56 ; 0,71] | – |
 
 Même recalibrées, les règles de profil restent au niveau du hasard, sauf la profondeur. Le seuil de profondeur que
-choisissent les données (hanche nettement au-dessus du genou) confirme le désaccord de référentiel (limite 2) : le
-dataset tolère des squats bien moins profonds que Myer. Le meilleur chiffre (diagonale, 0,69) est obtenu parmi
+choisissent les données (hanche nettement au-dessus du genou) va dans le sens d'un désaccord de référentiel
+(limite 2) : le dataset semble tolérer des squats bien moins profonds que Myer. Le meilleur chiffre (diagonale, 0,69) est obtenu parmi
 12 combinaisons testées, sur des indicateurs conçus après avoir vu les données : c'est une piste, pas un résultat.
 
 ### 6. Table de fiabilité des règles pour l'app (`docs/results/rule_reliability.csv`)
@@ -555,9 +555,9 @@ résultats, j'ai précisé la règle : un taux n'est retenu que si sa valeur est
 sinon, on le note « dépend du format » avec l'étendue des valeurs. Cette précision rend la conclusion **plus
 stricte**, pas plus favorable. Aucun seuil, regroupement ni hypothèse n'a été changé.
 
-**Lecture rapide.** Sur ces deux jeux, les règles figées détectent bien les défauts **marqués et mis en
-scène** pour lesquels elles ont été conçues : dos très penché (A), squat peu profond (B). C'est le contraire de
-Mendeley. Mais les effectifs (10 scènes, 6 sujets Shallow) ne permettent presque aucune conclusion au sens du
+**Lecture rapide.** Sur ces deux jeux, les règles figées signalent, à titre indicatif, les défauts **marqués
+et mis en scène** pour lesquels elles ont été conçues : dos très penché (A), squat peu profond (B). C'est le
+contraire de Mendeley. Mais les effectifs (10 scènes, 6 sujets Shallow) ne permettent presque aucune conclusion au sens du
 protocole, et rien ne montre que cela se généralise à des défauts plus discrets.
 
 #### A. Teng 2025 : `trunk_vs_tibia` contre Bad Back (référence Good), règle sur une image
@@ -589,7 +589,7 @@ protocole, et rien ne montre que cela se généralise à des défauts plus discr
   Good, 97 % des Bad Back et 85 % des Bad Heel. Une image n'est pas forcément le point bas : pas d'interprétation.
 - **Pourquoi c'est l'inverse de Mendeley** (où la même règle signale 60 % des good et des bad) : les Bad Back de
   Teng sont une erreur **marquée** (tronc − tibia = 43° en médiane, contre 5° pour Good et −10° pour Bad Heel), jouée par les mêmes
-  8 à 10 personnes dans les trois classes. La règle détecte une caricature. Cela ne dit rien des erreurs
+  8 à 10 personnes dans les trois classes. La règle signale, à titre indicatif, une caricature. Cela ne dit rien des erreurs
   discrètes d'un vrai pratiquant. En plus, la règle est adaptée (une image au lieu d'une répétition), et Bad Back
   désigne un dos mal aligné, pas forcément un tronc penché.
 
@@ -609,10 +609,10 @@ Kappa (a) : 0,69 [0,37 ; 0,94], indicatif. Les résultats sont identiques sous l
 
 - **Résultat concluant et indépendant du format :** sur des squats étiquetés « standard » par un autre
   laboratoire, la règle de profondeur de Myer ne signale que **4,7 % [0 ; 11,8 %]** des répétitions. Sur les
-  vidéos « good » de Mendeley, elle en signalait 92 %. La mesure n'est donc pas « cassée » : le désaccord vient
-  bien du **référentiel** (limite 2). Les squats « good » de Mendeley ne vont pas à la parallèle ; les
-  « standard » de Dai, oui. Attention, le critère de Dai n'est pas documenté non plus.
-- **Détection des squats peu profonds : 79 %, mais indicatif** (6 sujets). Le protocole interdit de conclure.
+  vidéos « good » de Mendeley, elle en signalait 92 %. C'est compatible avec l'hypothèse que le label Mendeley est peu fiable, sans la prouver (laboratoires, caméras et sujets différents). Attention, le critère
+  de Dai n'est pas documenté non plus.
+- **Les squats peu profonds sont signalés, à titre indicatif, à 79 %** (6 sujets). Le protocole interdit de
+  conclure, et la confusion avec le côté filmé n'est pas éliminée (limite 17).
 - **Confusion côté filmé / classe** (format 16:9, mêmes chiffres sous 4:3 et 1:1) :
   - mêmes sujets (01 à 06) : fausses alertes 0/70, détection 0,789 (indicatif). Le 0 vient d'aucun événement :
     l'IC [0 ; 0] du bootstrap est un artefact ;
@@ -625,7 +625,7 @@ Kappa (a) : 0,69 [0,37 ; 0,94], indicatif. Les résultats sont identiques sous l
 - **`trunk_vs_tibia` contre GoodMorning : descriptif** (1 sujet). 10/10 répétitions signalées. Fausses alertes
   sur Standard : **non retenues, dépendent du format** (0,088 en 1:1, 0,253 en 4:3, 0,443 en 16:9).
 - **`heel_rise`** (fausses alertes sur Standard) : non retenu, dépend du format (0,351 à 0,666). Même au plus bas,
-  plus d'un tiers des répétitions standard sont signalées. Cela confirme la limite 3 (talons non fiables).
+  plus d'un tiers des répétitions standard sont signalées. C'est cohérent avec la limite 3 (talons non fiables).
 - **`head_position`** (fausses alertes sur Standard) : non retenu au sens strict, dépend du format (0,017 à
   0,024). Il est faible sous les trois formats.
 
@@ -642,8 +642,8 @@ affichées « non retenu ».
 ### Limites ajoutées par la validation externe
 
 11. **Erreurs mises en scène, peu de personnes.** A : 8 à 10 personnes (estimation visuelle), les mêmes dans les
-    trois classes, avec des erreurs marquées. B : GoodMorning = 1 sujet, Shallow = 6 sujets. Bien détecter une
-    caricature ne prouve pas qu'on détecte une erreur réelle et discrète.
+    trois classes, avec des erreurs marquées. B : GoodMorning = 1 sujet, Shallow = 6 sujets. Signaler une
+    caricature ne prouve pas qu'on signalerait une erreur réelle et discrète.
 12. **Adaptations déclarées.** A : règle appliquée à une image, sans fenêtre de répétition ni critère « ≥ 2
     répétitions ». B : une répétition par fichier, donc analyse (a) sans le critère « ≥ 2 répétitions ».
 13. **Regroupements non vérifiables.** Les scènes de A ne sont pas des sujets vérifiés ; la conclusion change
@@ -654,6 +654,14 @@ affichées « non retenu ».
     non éliminable avec ces effectifs.
 16. **Une précision du protocole a été ajoutée après exécution** (robustesse des taux au format). Elle est
     déclarée et elle est plus stricte.
+17. **Confusion côté filmé / classe pour Shallow (B).** Pour 3 des 6 sujets Shallow (03, 05, 06), Shallow et
+    Standard sont filmés de côtés opposés. Les 8 répétitions Shallow manquées viennent toutes de ces sujets. Avec
+    3 sujets par groupe, on ne peut séparer l'effet du côté filmé, de la personne et du hasard : le taux de 79 % est
+    indicatif ET potentiellement biaisé.
+18. **Le statut de Teng dépend du découpage en scènes.** À 10 scènes (analyse principale, choisie avant les
+    résultats), les fausses alertes et l'exactitude équilibrée sont « indicatives » ; à 12, 15 scènes ou en blocs,
+    elles deviennent « concluantes ». **Le découpage n'a pas été modifié après coup** : l'analyse principale reste
+    à 10 scènes, et le résultat reste indicatif.
 
 ## Questions probables du jury
 
@@ -732,7 +740,7 @@ Son utilité devrait être évaluée par une étude avec des utilisateurs et un 
 
 **15. Que feriez-vous avec plus de temps ?**
 Une partie est faite : la validation externe sur deux jeux ouverts (Teng 2025, Dai 2026 v2), avec un protocole
-figé avant exécution. Elle montre que les règles détectent des erreurs marquées et mises en scène, et que la
+figé avant exécution. Les règles y signalent, à titre indicatif, des erreurs marquées et mises en scène, et la
 règle de profondeur ne donne que 4,7 % de fausses alertes sur des squats « standard » d'un autre laboratoire.
 Mais les effectifs sont trop petits pour conclure sur la détection. Il resterait à :
 (1) faire annoter par un coach certifié et par un second annotateur (accord inter-juges) ;
@@ -743,19 +751,19 @@ hypothèse ;
 (4) obtenir des labels par répétition et par type d'erreur ;
 (5) évaluer l'utilité pédagogique avec de vrais utilisateurs.
 
-**16. Pourquoi la règle tronc/tibia marche sur Teng (exactitude équilibrée 0,96) mais pas sur Mendeley ?**
+**16. Pourquoi la règle tronc/tibia sépare-t-elle les classes de Teng (exactitude équilibrée 0,96, indicatif) mais pas celles de Mendeley ?**
 Les erreurs de Teng sont marquées et jouées : en médiane, tronc − tibia = 43° pour Bad Back contre 5° pour Good.
 N'importe quel seuil raisonnable les sépare. Sur Mendeley, le type d'erreur des vidéos bad est inconnu et
-probablement varié. Ce résultat montre que la mesure fonctionne quand l'erreur est grande. Il ne montre pas
-qu'elle détecte des erreurs réelles. Et à 10 scènes, le protocole le classe « indicatif ».
+probablement varié. Ce résultat suggère, à titre indicatif, que la mesure réagit quand l'erreur est grande. Il
+ne montre pas qu'elle signalerait des erreurs réelles. Et à 10 scènes, le protocole le classe « indicatif ».
 
 **17. La règle de profondeur signale 92 % des « good » de Mendeley mais 4,7 % des « standard » de Dai.
 Qu'en concluez-vous ?**
-Que la mesure de profondeur est cohérente et que le problème de Mendeley est le référentiel : ses squats
-« good » ne vont pas à la parallèle. C'est le résultat externe le plus solide : 28 sujets, indépendant du format
-d'image, statut « concluant ». Mais le critère « standard » de Dai n'est pas documenté non plus.
+Que c'est compatible avec l'hypothèse que le label Mendeley est peu fiable, sans la prouver (laboratoires, caméras et sujets différents). Les fausses alertes sur Dai sont le résultat externe le plus solide : 28 sujets,
+indépendant du format d'image, statut « concluant ». Mais le critère « standard » de Dai n'est pas documenté non
+plus, et on compare deux populations différentes, pas les mêmes squats jugés par deux standards.
 
-**18. La règle détecte 79 % des squats peu profonds. Pourquoi ne pas l'affirmer ?**
+**18. La règle signale 79 % des squats peu profonds. Pourquoi ne pas l'affirmer ?**
 Parce que la classe Shallow ne compte que 6 sujets. Le critère, fixé avant les résultats, interdit de conclure
 sous 10 groupes. L'IC va de 0,50 à 1,00 : il est compatible avec une détection d'une fois sur deux. Changer le
 critère après coup serait du « p-hacking ».

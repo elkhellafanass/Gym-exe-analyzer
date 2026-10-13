@@ -63,10 +63,10 @@ python scripts/inspect_external.py      # description des jeux (~10 min la premi
 python scripts/evaluate_external.py     # règles figées, protocole committé avant exécution (~8 min)
 ```
 
-En bref : les règles détectent les erreurs marquées et mises en scène (dos très penché, squat peu profond). La
-profondeur ne donne que 4,7 % de fausses alertes sur des squats « standard » d'un autre laboratoire (résultat
-concluant, indépendant du format d'image). Mais les effectifs (6 sujets Shallow, ~10 scènes) ne permettent pas de
-conclure sur la détection. Détails et limites : [docs/PIPELINE.md](docs/PIPELINE.md).
+En bref : sur Teng (dos très penché) et sur Shallow (squat peu profond), les règles signalent, à titre
+indicatif, les erreurs marquées et mises en scène. La profondeur ne donne que 4,7 % de fausses alertes sur des
+squats « standard » d'un autre laboratoire (résultat concluant, indépendant du format d'image). C'est compatible avec l'hypothèse que le label Mendeley est peu fiable, sans la prouver (laboratoires, caméras et sujets différents).
+Les effectifs (6 sujets Shallow, ~10 scènes) ne permettent pas de conclure sur la détection. Détails et limites : [docs/PIPELINE.md](docs/PIPELINE.md).
 
 ## Documentation
 
