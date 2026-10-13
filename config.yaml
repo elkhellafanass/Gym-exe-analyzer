@@ -153,3 +153,26 @@ evaluation:
   bootstrap: {n: 2000, seed: 42}       # rééchantillonnage des SUJETS
   permutation: {n: 1000, seed: 42}     # test de permutation (régression logistique)
   calibration_bins: 5                  # courbe de fiabilité (5 groupes de 30 vidéos)
+
+# ---------------------------------------------------------------------
+# Jeux de données externes (validation externe). Extraits HORS du dépôt,
+# jamais commités. Racine surchargeable par EXTERNAL_DATA_DIR.
+# Attribution complète : docs/DATA_LICENSES.md
+# ---------------------------------------------------------------------
+external:
+  root: "data/external"
+  env_var: "EXTERNAL_DATA_DIR"
+  # Dossier hors dépôt pour les planches d'inspection (images de personnes)
+  inspection_dir: "data/inspection"
+  teng_squat:
+    dir: "A_teng_squat"
+    citation: "Teng, Christopher (2025). Squat Dataset [Data set]. Zenodo. https://doi.org/10.5281/zenodo.17558630"
+    doi: "10.5281/zenodo.17558630"
+    license: "CC BY 4.0"
+    accessed: "2026-10-13"
+  dai_squat:
+    dir: "B_dai_squat"
+    citation: "Dai, Zhiqiang (2026). Dataset for: Non-standard Squat Posture Detection Method Using Human Skeleton [Data set]. Zenodo. https://doi.org/10.5281/zenodo.18859797"
+    doi: "10.5281/zenodo.18859797"
+    license: "CC BY 4.0"
+    accessed: "2026-10-13"

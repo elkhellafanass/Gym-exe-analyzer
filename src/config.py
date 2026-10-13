@@ -32,3 +32,14 @@ def squat_data_dir(config: dict | None = None) -> Path:
     config = config or load_config()
     env_var = config["dataset"]["env_var"]
     return Path(os.environ.get(env_var) or config["dataset"]["squat_dir"])
+
+
+def external_data_dir(config: dict | None = None) -> Path:
+    """Racine des jeux de données externes (extraits hors du dépôt).
+
+    Même logique que squat_data_dir : la variable d'environnement
+    EXTERNAL_DATA_DIR est prioritaire sur config.yaml.
+    """
+    config = config or load_config()
+    env_var = config["external"]["env_var"]
+    return Path(os.environ.get(env_var) or config["external"]["root"])
