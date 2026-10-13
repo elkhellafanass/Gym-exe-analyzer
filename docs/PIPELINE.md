@@ -418,15 +418,129 @@ Repère et unités :
 | `knee_valgus`, `hip_shift` | **non** | règles de face ; B est de profil |
 | tempo, classifieur | **non** | fréquence d'images inconnue ; le classifieur a besoin du tempo |
 
-**Éléments également prévus (pas encore commencés) :** un second annotateur en aveugle sur les 50 vidéos de
-profil (kappa inter-juges) et `scripts/sensitivity_synthetic.py` (sensibilité des règles sur des squats
-synthétiques).
+**Éléments facultatifs, en fin de planning (après la phase C, si le temps le permet) :** un second annotateur en
+aveugle sur les 50 vidéos de profil (kappa inter-juges) et `scripts/sensitivity_synthetic.py` (sensibilité des
+règles sur des squats synthétiques).
 
 Niveau de décision : une répétition par fichier. Deux options à figer à l'étape 3 : (a) verdict **par
 répétition** (la règle telle qu'appliquée à chaque répétition, sans le critère « ≥ 2 répétitions ») ; (b)
 regrouper les fichiers d'un même sujet et d'une même classe et appliquer « ≥ 2 répétitions ». Effectifs v2 :
 Standard 296 fichiers / 28 sujets, Shallow 38 / 6 sujets (01 à 06, qui ont aussi du Standard), GoodMorning 10 /
 1 sujet.
+
+### Étape 3 : protocole de la validation externe (figé et committé AVANT toute exécution, 13/10/2026)
+
+Ce protocole est committé avant d'écrire et d'exécuter le script d'évaluation (`scripts/evaluate_external.py`).
+Toute déviation sera signalée comme telle dans les résultats. Décisions validées par l'auteur le 13/10/2026.
+
+**1. Ce qui est figé**
+- Règles, seuils, fenêtres, sens et paramètres techniques : `config.yaml` tel qu'au commit de ce protocole.
+  **Aucune recalibration sur A ni sur B, aucun classifieur** (le classifieur a besoin du tempo, indisponible).
+- Clusters de A (scènes et blocs) : calculés par `scripts/inspect_external.py` (commit `5545dc2`), sans regarder
+  aucune règle ; enregistrés dans `outputs/external/teng_images.csv`.
+- Mêmes définitions qu'en phase B : seuil de visibilité 0,5 ; un point sous ce seuil est absent.
+
+**2. Métriques, pour chaque couple (règle, classe cible)**
+- **Détection** = part des unités de la classe cible signalées par la règle.
+- **Fausses alertes** = part des unités de la classe de référence signalées (A : Good ; B : Standard).
+- **Exactitude équilibrée** = (détection + 1 − fausses alertes) / 2. Hasard = 0,5.
+- Secondaire : kappa de Cohen entre le signalement et la classe (cible contre référence) ; taux de signalement sur
+  les autres classes (descriptif).
+- **IC 95 %** : bootstrap percentile, 2000 tirages, graine 42 (`src/metrics.py`). On tire des **clusters** avec
+  remise, en gardant toutes leurs unités : scènes pour A, sujets pour B. Jamais d'IC au niveau de l'image ou du
+  fichier.
+
+**3. Critère décidé d'avance pour ne pas conclure (effectifs trop petits)**
+
+Le nombre de clusters compte, pas le nombre d'images ou de fichiers. Une métrique est classée selon le nombre de
+clusters qui contiennent la classe concernée :
+
+| Clusters | Statut | Ce qui est rapporté |
+|---|---|---|
+| ≥ 10 | **concluant** | estimation + IC ; « sépare mieux que le hasard » seulement si l'IC de l'exactitude équilibrée est entièrement au-dessus de 0,5 ; « sens inverse » s'il est entièrement en dessous ; sinon « aucune séparation démontrée » |
+| 5 à 9 | **indicatif** | estimation + IC, marqués « indicatif, pas de conclusion » |
+| < 5 | **descriptif** | comptes seulement, sans IC ni conclusion |
+
+L'exactitude équilibrée prend le statut le plus faible de ses deux composantes. Pourquoi 10 ? C'est un choix
+d'ingénierie, conservateur et non sourcé. Avec peu de clusters, le bootstrap percentile donne des IC trop étroits
+(problème décrit par Cameron, Gelbach et Miller, 2008, *Review of Economics and Statistics* 90(3):414-427,
+doi:10.1162/rest.90.3.414). Conséquences connues **avant** l'exécution (comptes de clusters, aucune règle
+calculée) :
+- A, 10 scènes : Bad Back présent dans 10 scènes (détection concluante), Good dans 9 (fausses alertes et
+  exactitude équilibrée indicatives) ;
+- B : Standard 28 sujets (fausses alertes concluantes) ; **Shallow 6 sujets (indicatif)** ; **GoodMorning 1 sujet
+  (descriptif seulement)**.
+
+**4. Unités non mesurables : comptées, jamais retirées en silence**
+- Une unité est « non mesurable » pour une règle si sa valeur ne peut pas être calculée : personne non détectée,
+  point nécessaire sous le seuil de visibilité, ou (B) aucune répétition détectée.
+- Pour chaque couple (règle, classe), on publie le nombre d'unités mesurables et non mesurables.
+- Analyse principale : métriques sur les unités mesurables. Sensibilité : non mesurable = « non signalé »
+  (c'est ce que verrait l'utilisateur de l'app : aucun défaut affiché).
+
+**5. Jeu A (Teng 2025, images)**
+- Unité : l'image. Les dossiers train et test sont fusionnés : on n'entraîne rien, et les mêmes scènes sont dans
+  les deux. La classe vient du nom du dossier, sans tenir compte de la casse.
+- Pipeline : points du cache `outputs/external/teng_landmarks.npz` (MediaPipe, mode IMAGE), visibilité < 0,5 →
+  absent, puis `compute_indicators` sur une série d'une image. Pas d'interpolation ni de lissage (image unique).
+- **Adaptation déclarée :** la règle est appliquée à la valeur de l'indicateur sur **une image**, et non à
+  l'agrégat (`max`) sur une fenêtre de répétition, sans le critère « ≥ 2 répétitions ». Ce n'est pas la règle
+  d'origine.
+- Couples évalués :
+  - `trunk_vs_tibia` → cible Bad Back, référence Good (analyse principale de A) ;
+  - Bad Heel : **non évaluable** (aucune règle sourcée ne le mesure, voir étape 2). Le taux de signalement de
+    `trunk_vs_tibia` et de `depth` sur Bad Heel est donné à titre descriptif ;
+  - `depth` : taux de signalement par classe, descriptif seulement (aucune classe ne correspond).
+- Clusters : **10 scènes (principal)**. Sensibilité : 6, 8, 12 et 15 scènes, et blocs consécutifs (seuil 0,05).
+  Dans ce dernier découpage, aucun bloc ne contient à la fois Bad Back et Good. La règle des 10 clusters
+  s'applique à chaque découpage.
+- **Facteur de confusion : la profondeur.** Les Bad Back sont moins profonds (angle du genou médian 84°, contre
+  70° pour Good), et l'inclinaison du tronc dépend de la profondeur. Analyse secondaire prévue : métriques par
+  tranche d'angle du genou (< 90°, 90-120°), en gardant le même critère d'effectif. Si l'écart entre Bad Back et
+  Good disparaît dans les tranches, il est attribué à la profondeur et non au dos.
+- Limite rappelée : Bad Back = « spinal misalignment » selon Zenodo. `trunk_vs_tibia` mesure l'inclinaison du
+  tronc, pas la courbure du dos.
+
+**6. Jeu B (Dai 2026 v2, CSV)**
+- Unité : le fichier (= une répétition). Copies identiques retirées par MD5 : 344 fichiers.
+- Pipeline : `to_pose_series(aspect=…)`, puis `analyze_pose` exactement comme dans l'app (nettoyage, lissage sur
+  7 images, segmentation des répétitions, règles). La fréquence d'images, inconnue, est fixée à 30 images/s par
+  convention : elle n'entre dans aucune règle, seulement dans les durées, qui ne sont pas rapportées.
+- **Hypothèses de format** : 16:9 (principale), 4:3 et 1:1 (sensibilité). **Une conclusion n'est retenue que si
+  elle est la même sous les trois.**
+- **(a) Analyse principale : verdict par répétition.** Le fichier est signalé si sa répétition dépasse le seuil.
+  Sans critère « ≥ 2 répétitions », puisqu'il n'y a qu'une répétition. Si la segmentation trouve plusieurs
+  répétitions (1 fichier sur 344 attendu), le fichier est signalé si au moins une l'est, et on le compte. Si elle
+  n'en trouve aucune, le fichier est non mesurable (point 4).
+- **(b) Analyse secondaire : regroupement par (sujet, classe).** Le groupe est signalé si au moins 2 répétitions
+  le sont (`min_reps_for_video_error`), comme une vidéo du dataset principal. Un groupe avec moins de 2
+  répétitions mesurables est non mesurable.
+- **Sensibilité « fichier = répétition entière » :** début = première image, point bas = hanche la plus basse,
+  fin = dernière image, au lieu de la segmentation automatique. La segmentation dépend en effet du format, via la
+  longueur de cuisse qui sert d'unité.
+- Bootstrap : **par sujet (28 sujets)** dans (a) et (b).
+- Couples évalués :
+  - **`depth` → cible Shallow, référence Standard : résultat mis en avant.** La règle ne dépend que du signe de
+    (y hanche − y genou), donc pas du format. On le vérifie en comparant les trois hypothèses : toute différence
+    viendrait de la segmentation et serait rapportée. Statut attendu : indicatif (6 sujets Shallow) ;
+  - `trunk_vs_tibia` → cible GoodMorning, référence Standard : **descriptif seulement** (1 sujet) ;
+  - `heel_rise`, `head_position` : fausses alertes sur Standard seulement (aucune classe cible), sous les trois
+    formats ;
+  - `knee_valgus`, `hip_shift`, tempo, classifieur : non évalués (étape 2).
+- **Confusion entre côté filmé et classe.**
+  - Le côté visible est publié par classe.
+  - Analyse secondaire « mêmes sujets » : référence = les répétitions Standard des 6 sujets qui ont aussi du
+    Shallow (01 à 06), pour comparer chaque personne à elle-même.
+  - Description séparée des sujets filmés du même côté dans les deux classes (01, 02, 04) et du côté opposé (03,
+    05, 06). Effectifs trop petits pour conclure : descriptif.
+  - Pour GoodMorning, sujet unique filmé de l'autre côté : aucune conclusion possible.
+
+**7. Sorties prévues**
+- `docs/results/external_*.csv` (métriques, IC, statut, effectifs, non mesurables) et `docs/figures/external_*.png`.
+- Une table de fiabilité étendue lue par l'app : `docs/results/rule_reliability.csv`, avec une colonne de
+  provenance (Mendeley/annotation, Teng, Dai). Seules les métriques au statut « concluant » sont présentées comme
+  telles dans l'app ; les autres sont étiquetées « indicatif » ou « descriptif ».
+- Mise à jour de cette page (résultats, limites, question 15 du jury). Aucune image ni coordonnée brute publiée.
 
 ## Questions probables du jury
 
