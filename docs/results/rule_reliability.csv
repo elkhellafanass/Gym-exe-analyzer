@@ -1,9 +1,14 @@
-rule,view,view_status,flag_rate_good,flag_rate_bad,n_good,n_bad,n_present,n_absent,detection,detection_ci_low,detection_ci_high,false_alert,false_alert_ci_low,false_alert_ci_high,evaluated_against
-depth,side,valid,0.920,1.000,25,25,21.000,29.000,0.952,0.852,1.000,0.966,0.897,1.000,"annotation en aveugle de l'auteur (non-expert, 50 vidéos)"
-heel_rise,side,valid,0.800,0.760,25,25,12.000,38.000,0.750,0.400,1.000,0.789,0.667,0.895,"annotation en aveugle de l'auteur (non-expert, 50 vidéos)"
-trunk_vs_tibia,side,valid,0.600,0.600,25,25,29.000,21.000,0.621,0.407,0.808,0.571,0.308,0.812,"annotation en aveugle de l'auteur (non-expert, 50 vidéos)"
-head_position,side,valid,0.240,0.160,25,25,42.000,8.000,0.238,0.100,0.390,0.000,0.000,0.000,"annotation en aveugle de l'auteur (non-expert, 50 vidéos)"
-knee_valgus,front,valid,0.160,0.280,25,25,,,,,,,,,fiabilité non évaluée contre annotation
-knee_valgus,diagonal,reduced,0.250,0.480,24,25,,,,,,,,,fiabilité non évaluée contre annotation
-hip_shift,front,valid,0.000,0.160,25,25,,,,,,,,,fiabilité non évaluée contre annotation
-hip_shift,diagonal,reduced,0.750,0.840,24,25,,,,,,,,,fiabilité non évaluée contre annotation
+rule,view,view_status,provenance,flag_rate_good,flag_rate_bad,n_good,n_bad,n_present,n_absent,detection,detection_ci_low,detection_ci_high,false_alert,false_alert_ci_low,false_alert_ci_high,evaluated_against,detection_status,detection_conclusion,false_alert_status,false_alert_conclusion,balanced_accuracy,balanced_accuracy_ci_low,balanced_accuracy_ci_high,balanced_accuracy_status,balanced_accuracy_conclusion
+depth,side,valid,Mendeley Data (label vidéo) ; annotation en aveugle de l'auteur (profil),0.920,1.000,25.000,25.000,21.000,29.000,0.952,0.852,1.000,0.966,0.897,1.000,"annotation en aveugle de l'auteur (non-expert, 50 vidéos)",,,,,,,,,
+heel_rise,side,valid,Mendeley Data (label vidéo) ; annotation en aveugle de l'auteur (profil),0.800,0.760,25.000,25.000,12.000,38.000,0.750,0.400,1.000,0.789,0.667,0.895,"annotation en aveugle de l'auteur (non-expert, 50 vidéos)",,,,,,,,,
+trunk_vs_tibia,side,valid,Mendeley Data (label vidéo) ; annotation en aveugle de l'auteur (profil),0.600,0.600,25.000,25.000,29.000,21.000,0.621,0.407,0.808,0.571,0.308,0.812,"annotation en aveugle de l'auteur (non-expert, 50 vidéos)",,,,,,,,,
+head_position,side,valid,Mendeley Data (label vidéo) ; annotation en aveugle de l'auteur (profil),0.240,0.160,25.000,25.000,42.000,8.000,0.238,0.100,0.390,0.000,0.000,0.000,"annotation en aveugle de l'auteur (non-expert, 50 vidéos)",,,,,,,,,
+knee_valgus,front,valid,Mendeley Data (label vidéo) ; annotation en aveugle de l'auteur (profil),0.160,0.280,25.000,25.000,,,,,,,,,fiabilité non évaluée contre annotation,,,,,,,,,
+knee_valgus,diagonal,reduced,Mendeley Data (label vidéo) ; annotation en aveugle de l'auteur (profil),0.250,0.480,24.000,25.000,,,,,,,,,fiabilité non évaluée contre annotation,,,,,,,,,
+hip_shift,front,valid,Mendeley Data (label vidéo) ; annotation en aveugle de l'auteur (profil),0.000,0.160,25.000,25.000,,,,,,,,,fiabilité non évaluée contre annotation,,,,,,,,,
+hip_shift,diagonal,reduced,Mendeley Data (label vidéo) ; annotation en aveugle de l'auteur (profil),0.750,0.840,24.000,25.000,,,,,,,,,fiabilité non évaluée contre annotation,,,,,,,,,
+trunk_vs_tibia,side,valid,"Teng 2025 (images, adaptation : règle sur une image, 10 scènes)",,,,,1260.000,1311.000,0.983,0.954,1.000,0.057,0.001,0.123,classe Bad Back (dos) contre Good,concluant,taux mesuré,indicatif,"indicatif, pas de conclusion",0.963,0.934,0.995,indicatif,"indicatif, pas de conclusion"
+depth,side,valid,"Dai 2026 v2 (répétitions, format 16:9 ; 4:3 et 1:1 en sensibilité)",,,,,38.000,296.000,0.789,0.500,1.000,0.047,0.000,0.118,classe Shallow contre Standard,indicatif,"indicatif, pas de conclusion",concluant,taux mesuré,0.871,0.727,0.988,indicatif,"indicatif, pas de conclusion"
+trunk_vs_tibia,side,valid,"Dai 2026 v2 (répétitions, format 16:9)",,,,,10.000,296.000,1.000,,,0.443,0.284,0.588,classe GoodMorning (1 sujet) contre Standard,descriptif,"descriptif, pas de conclusion",concluant,non retenue : dépend du format (0.088 à 0.443),0.779,,,descriptif,non retenue : dépend du format (0.779 à 0.956)
+heel_rise,side,valid,"Dai 2026 v2 (répétitions, format 16:9)",,,,,,296.000,,,,0.351,0.208,0.494,taux de signalement sur Standard (pas de classe cible),,,concluant,non retenue : dépend du format (0.351 à 0.666),,,,,
+head_position,side,valid,"Dai 2026 v2 (répétitions, format 16:9)",,,,,,296.000,,,,0.024,0.000,0.073,taux de signalement sur Standard (pas de classe cible),,,concluant,non retenue : dépend du format (0.017 à 0.024),,,,,

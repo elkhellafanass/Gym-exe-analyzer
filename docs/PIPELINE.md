@@ -314,7 +314,7 @@ dataset tolère des squats bien moins profonds que Myer. Le meilleur chiffre (di
    selon l'annotateur. Les comparaisons par vue ne sont pas concluantes.
 10. **Un seul annotateur, non expert**, sans mesure de reproductibilité (pas de deuxième annotation).
 
-## Validation externe (en cours, étapes 1-2 faites le 13/10/2026)
+## Validation externe (faite le 13/10/2026)
 
 Deux jeux ouverts (CC BY 4.0), jamais commités, extraits hors du dépôt (`config.yaml` → `external`).
 Attribution et écarts vérifiés : `docs/DATA_LICENSES.md`. Description : `python scripts/inspect_external.py`
@@ -542,6 +542,119 @@ calculée) :
   telles dans l'app ; les autres sont étiquetées « indicatif » ou « descriptif ».
 - Mise à jour de cette page (résultats, limites, question 15 du jury). Aucune image ni coordonnée brute publiée.
 
+### Étape 4 : résultats de la validation externe (13/10/2026)
+
+Commande : `python scripts/evaluate_external.py` (≈ 8 min). Tableaux : `docs/results/external_metrics.csv`
+(toutes les métriques, IC, statuts, effectifs), `external_flag_counts.csv` (mesurables, non mesurables et
+signalés par classe), `external_B_robustness_formats.csv`, `external_B_visible_side.csv`,
+`external_deviations.csv`. Figures : `docs/figures/external_detection.png`, `external_distributions.png`.
+
+**Déviation au protocole (une seule, déclarée).** Le protocole disait : « une conclusion n'est retenue que si
+elle est la même sous les trois formats ». Il ne disait pas comment comparer des **taux**. Après avoir vu les
+résultats, j'ai précisé la règle : un taux n'est retenu que si sa valeur est identique sous les trois formats ;
+sinon, on le note « dépend du format » avec l'étendue des valeurs. Cette précision rend la conclusion **plus
+stricte**, pas plus favorable. Aucun seuil, regroupement ni hypothèse n'a été changé.
+
+**Lecture rapide.** Sur ces deux jeux, les règles figées détectent bien les défauts **marqués et mis en
+scène** pour lesquels elles ont été conçues : dos très penché (A), squat peu profond (B). C'est le contraire de
+Mendeley. Mais les effectifs (10 scènes, 6 sujets Shallow) ne permettent presque aucune conclusion au sens du
+protocole, et rien ne montre que cela se généralise à des défauts plus discrets.
+
+#### A. Teng 2025 : `trunk_vs_tibia` contre Bad Back (référence Good), règle sur une image
+
+| Regroupement | Détection [IC 95 %] | Fausses alertes [IC 95 %] | Exactitude équilibrée [IC 95 %] | Statut (BA) |
+|---|---|---|---|---|
+| **10 scènes (principal)** | **0,983 [0,954 ; 1,000]**, concluant | 0,057 [0,001 ; 0,123], indicatif (9 scènes) | 0,963 [0,934 ; 0,995] | **indicatif** |
+| 6 scènes | 0,983 [0,965 ; 1,000] | 0,057 [0,002 ; 0,151] | 0,963 [0,925 ; 0,992] | indicatif |
+| 8 scènes | 0,983 [0,949 ; 0,999] | 0,057 [0,002 ; 0,132] | 0,963 [0,929 ; 0,992] | indicatif |
+| 12 scènes | 0,983 [0,954 ; 1,000] | 0,057 [0,001 ; 0,120] | 0,963 [0,936 ; 0,995] | concluant : sépare mieux que le hasard |
+| 15 scènes | 0,983 [0,955 ; 1,000] | 0,057 [0,001 ; 0,122] | 0,963 [0,935 ; 0,994] | concluant : sépare mieux que le hasard |
+| blocs consécutifs (0,05) | 0,983 [0,955 ; 1,000] | 0,057 [0,001 ; 0,122] | 0,963 [0,928 ; 0,997] | concluant : sépare mieux que le hasard |
+
+- Effectifs : 1239 images Bad Back signalées sur 1260 mesurables ; 75 images Good sur 1311. Kappa 0,93
+  [0,87 ; 0,99] (indicatif).
+- **Non mesurables** (point du profil sous le seuil de visibilité) : 62 images Bad Back sur 1322 (4,7 %), 1 Bad
+  Heel, 0 Good. Si on les compte comme « non signalées » (ce que verrait l'utilisateur), la détection passe à
+  0,937 [0,873 ; 0,988].
+- **Dans l'analyse principale (10 scènes), on ne peut pas conclure** : les Good ne sont présents que dans 9
+  scènes, sous le seuil de 10 fixé d'avance. Avec 12 scènes, 15 scènes ou des blocs, le statut devient
+  « concluant ». Les estimations ne changent pas ; seul le nombre de groupes change. La conclusion dépend donc du
+  découpage, qui est approximatif.
+- **Confusion avec la profondeur : l'écart ne s'explique pas par elle (indicatif).** Dans chaque tranche d'angle
+  du genou, l'écart persiste : < 90°, détection 0,978 et fausses alertes 0,059 ; 90-120°, détection 0,995 et
+  fausses alertes 0,017 (1 image Good sur 60). Les deux tranches restent « indicatives ».
+- **Bad Heel : non évaluable**, comme prévu. À titre descriptif, `trunk_vs_tibia` signale 1,5 % des images Bad
+  Heel. Leur tronc est en moyenne moins penché que le tibia (valeurs négatives, `external_distributions.png`).
+- `depth` (descriptif, aucune classe correspondante) : la hanche est au-dessus du genou sur 73 % des images
+  Good, 97 % des Bad Back et 85 % des Bad Heel. Une image n'est pas forcément le point bas : pas d'interprétation.
+- **Pourquoi c'est l'inverse de Mendeley** (où la même règle signale 60 % des good et des bad) : les Bad Back de
+  Teng sont une erreur **marquée** (tronc − tibia = 43° en médiane, contre 5° pour Good et −10° pour Bad Heel), jouée par les mêmes
+  8 à 10 personnes dans les trois classes. La règle détecte une caricature. Cela ne dit rien des erreurs
+  discrètes d'un vrai pratiquant. En plus, la règle est adaptée (une image au lieu d'une répétition), et Bad Back
+  désigne un dos mal aligné, pas forcément un tronc penché.
+
+#### B. Dai 2026 v2 : `depth` contre Shallow (référence Standard), une répétition par fichier
+
+**Indépendance au format vérifiée** : les 344 fichiers ont un verdict `depth` identique sous 16:9, 4:3 et 1:1,
+et la valeur garde le même signe dans 100 % des cas. Aucun fichier n'est non mesurable : une répétition a été
+détectée dans chacun, sous les trois formats.
+
+| Analyse | Détection (Shallow) [IC 95 %] | Fausses alertes (Standard) [IC 95 %] | Exactitude équilibrée [IC 95 %] |
+|---|---|---|---|
+| **(a) par répétition (principal)** | 0,789 [0,500 ; 1,000] (30/38), **indicatif** (6 sujets) | **0,047 [0,000 ; 0,118] (14/296), concluant** (28 sujets) | 0,871 [0,727 ; 0,988], indicatif |
+| (a) fichier = répétition entière | 0,789 [0,500 ; 1,000] | 0,047 [0,000 ; 0,118] | 0,871 [0,727 ; 0,988] |
+| (b) par (sujet, classe), ≥ 2 répétitions | 1,000 (6/6), indicatif | 0,107 [0,000 ; 0,214] (3/28), concluant | 0,946 [0,893 ; 1,000], indicatif |
+
+Kappa (a) : 0,69 [0,37 ; 0,94], indicatif. Les résultats sont identiques sous les trois formats.
+
+- **Résultat concluant et indépendant du format :** sur des squats étiquetés « standard » par un autre
+  laboratoire, la règle de profondeur de Myer ne signale que **4,7 % [0 ; 11,8 %]** des répétitions. Sur les
+  vidéos « good » de Mendeley, elle en signalait 92 %. La mesure n'est donc pas « cassée » : le désaccord vient
+  bien du **référentiel** (limite 2). Les squats « good » de Mendeley ne vont pas à la parallèle ; les
+  « standard » de Dai, oui. Attention, le critère de Dai n'est pas documenté non plus.
+- **Détection des squats peu profonds : 79 %, mais indicatif** (6 sujets). Le protocole interdit de conclure.
+- **Confusion côté filmé / classe** (format 16:9, mêmes chiffres sous 4:3 et 1:1) :
+  - mêmes sujets (01 à 06) : fausses alertes 0/70, détection 0,789 (indicatif). Le 0 vient d'aucun événement :
+    l'IC [0 ; 0] du bootstrap est un artefact ;
+  - sujets filmés du même côté dans les deux classes (01, 02, 04) : 12/12 détectés, 0/33 fausse alerte
+    (descriptif) ;
+  - sujets filmés de côtés opposés (03, 05, 06) : 18/26 détectés, 0/37 fausse alerte (descriptif).
+
+  Toutes les répétitions Shallow manquées sont chez les sujets filmés de côtés opposés. Avec 3 sujets par
+  groupe, impossible de dire si c'est le côté filmé, la personne ou le hasard.
+- **`trunk_vs_tibia` contre GoodMorning : descriptif** (1 sujet). 10/10 répétitions signalées. Fausses alertes
+  sur Standard : **non retenues, dépendent du format** (0,088 en 1:1, 0,253 en 4:3, 0,443 en 16:9).
+- **`heel_rise`** (fausses alertes sur Standard) : non retenu, dépend du format (0,351 à 0,666). Même au plus bas,
+  plus d'un tiers des répétitions standard sont signalées. Cela confirme la limite 3 (talons non fiables).
+- **`head_position`** (fausses alertes sur Standard) : non retenu au sens strict, dépend du format (0,017 à
+  0,024). Il est faible sous les trois formats.
+
+#### Table de fiabilité de l'app (`docs/results/rule_reliability.csv`)
+
+La table a désormais une colonne `provenance`, et un statut pour chaque métrique externe. L'app (phase C)
+présentera comme résultats **seulement les métriques au statut « concluant »**, avec leur IC :
+- `trunk_vs_tibia`, Teng : détection 0,98 (une image, scènes) ;
+- `depth`, Dai : fausses alertes 4,7 % sur Standard.
+
+Les autres seront affichées « indicatif » ou « descriptif », et les métriques qui dépendent du format seront
+affichées « non retenu ».
+
+### Limites ajoutées par la validation externe
+
+11. **Erreurs mises en scène, peu de personnes.** A : 8 à 10 personnes (estimation visuelle), les mêmes dans les
+    trois classes, avec des erreurs marquées. B : GoodMorning = 1 sujet, Shallow = 6 sujets. Bien détecter une
+    caricature ne prouve pas qu'on détecte une erreur réelle et discrète.
+12. **Adaptations déclarées.** A : règle appliquée à une image, sans fenêtre de répétition ni critère « ≥ 2
+    répétitions ». B : une répétition par fichier, donc analyse (a) sans le critère « ≥ 2 répétitions ».
+13. **Regroupements non vérifiables.** Les scènes de A ne sont pas des sujets vérifiés ; la conclusion change
+    selon le découpage (indicatif à 10 scènes, concluant à 12).
+14. **Format de B inconnu.** Seule la profondeur n'en dépend pas. Les règles d'angle donnent des fausses alertes
+    qui varient d'un facteur 5 selon l'hypothèse.
+15. **Classes filmées différemment** (côté de la caméra, résolution) dans les deux jeux : facteur de confusion
+    non éliminable avec ces effectifs.
+16. **Une précision du protocole a été ajoutée après exécution** (robustesse des taux au format). Elle est
+    déclarée et elle est plus stricte.
+
 ## Questions probables du jury
 
 **1. Votre modèle fait-il mieux que le hasard ?**
@@ -618,7 +731,47 @@ façon fiable. Il reste conçu comme aide pédagogique : il montre des mesures, 
 Son utilité devrait être évaluée par une étude avec des utilisateurs et un expert.
 
 **15. Que feriez-vous avec plus de temps ?**
-(1) Faire annoter les vidéos par un coach certifié et par un deuxième annotateur (accord inter-juges).
-(2) Filmer à 30 ou 60 fps et en plus haute résolution, pour le tempo et les talons. (3) Tester sur des sujets
-jamais vus pendant la conception, pour supprimer la contamination. (4) Obtenir des labels par répétition et par
-type d'erreur. (5) Évaluer l'utilité pédagogique avec de vrais utilisateurs.
+Une partie est faite : la validation externe sur deux jeux ouverts (Teng 2025, Dai 2026 v2), avec un protocole
+figé avant exécution. Elle montre que les règles détectent des erreurs marquées et mises en scène, et que la
+règle de profondeur ne donne que 4,7 % de fausses alertes sur des squats « standard » d'un autre laboratoire.
+Mais les effectifs sont trop petits pour conclure sur la détection. Il resterait à :
+(1) faire annoter par un coach certifié et par un second annotateur (accord inter-juges) ;
+(2) trouver ou filmer, avec consentement, des vidéos de pratiquants réels avec des erreurs discrètes, des
+identifiants de sujet, au moins 10 sujets par type d'erreur, à 30-60 fps ;
+(3) obtenir la résolution des vidéos de Dai (demande à l'auteur), pour évaluer les règles d'angle sans
+hypothèse ;
+(4) obtenir des labels par répétition et par type d'erreur ;
+(5) évaluer l'utilité pédagogique avec de vrais utilisateurs.
+
+**16. Pourquoi la règle tronc/tibia marche sur Teng (exactitude équilibrée 0,96) mais pas sur Mendeley ?**
+Les erreurs de Teng sont marquées et jouées : en médiane, tronc − tibia = 43° pour Bad Back contre 5° pour Good.
+N'importe quel seuil raisonnable les sépare. Sur Mendeley, le type d'erreur des vidéos bad est inconnu et
+probablement varié. Ce résultat montre que la mesure fonctionne quand l'erreur est grande. Il ne montre pas
+qu'elle détecte des erreurs réelles. Et à 10 scènes, le protocole le classe « indicatif ».
+
+**17. La règle de profondeur signale 92 % des « good » de Mendeley mais 4,7 % des « standard » de Dai.
+Qu'en concluez-vous ?**
+Que la mesure de profondeur est cohérente et que le problème de Mendeley est le référentiel : ses squats
+« good » ne vont pas à la parallèle. C'est le résultat externe le plus solide : 28 sujets, indépendant du format
+d'image, statut « concluant ». Mais le critère « standard » de Dai n'est pas documenté non plus.
+
+**18. La règle détecte 79 % des squats peu profonds. Pourquoi ne pas l'affirmer ?**
+Parce que la classe Shallow ne compte que 6 sujets. Le critère, fixé avant les résultats, interdit de conclure
+sous 10 groupes. L'IC va de 0,50 à 1,00 : il est compatible avec une détection d'une fois sur deux. Changer le
+critère après coup serait du « p-hacking ».
+
+**19. La résolution des vidéos de Dai est inconnue. Comment avez-vous calculé des angles ?**
+Je ne l'ai pas choisie en silence. J'ai testé des hypothèses avec une méthode validée sur Mendeley (la longueur des
+os doit rester constante) : les formats portrait sont exclus, 16:9 est le plus plausible. J'ai évalué sous 16:9,
+4:3 et 1:1, et je ne retiens qu'un résultat identique sous les trois. Seule la profondeur passe ce test, car elle
+ne dépend que du signe d'une différence verticale.
+
+**20. Les « scènes » de Teng ne sont pas des sujets. Votre bootstrap n'est-il pas arbitraire ?**
+En partie, oui, et je le montre : avec 10 scènes, le statut est « indicatif » ; avec 12 ou 15, « concluant ».
+Les estimations ne bougent pas, seule l'incertitude change. C'est pourquoi l'analyse principale (10 scènes,
+choisie avant) reste indicative, et pourquoi je ne présente pas ce résultat comme une validation.
+
+**21. Avez-vous modifié votre protocole après avoir vu les résultats ?**
+Une fois, et je l'ai déclaré : le protocole ne disait pas comment juger qu'un taux est « le même sous trois
+formats ». J'ai exigé une valeur identique, ce qui est plus strict. La raison et le texte exact sont dans
+`docs/results/external_deviations.csv`. Rien d'autre n'a changé (le commit `65bc4c1` le prouve).

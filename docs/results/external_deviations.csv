@@ -1,0 +1,2 @@
+deviation
+"Précision du point 6 (ajoutée APRÈS avoir vu les résultats) : le protocole ne disait pas comment juger qu'un TAUX est 'le même sous les trois formats'. Règle appliquée : la valeur estimée doit être identique (à 0,001 près) ; sinon 'dépend du format' avec l'étendue des valeurs. Raison : les fausses alertes de trunk_vs_tibia, heel_rise et head_position varient selon le format alors que leur libellé 'taux mesuré' était identique."

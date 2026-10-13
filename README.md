@@ -52,6 +52,22 @@ Résultats : `docs/results/` (tableaux) et `docs/figures/` (figures), commentés
 [docs/PIPELINE.md](docs/PIPELINE.md). En bref : la régression logistique fait un peu mieux que le hasard
 (AUC 0,60 [0,54 ; 0,67]), mais ses probabilités ne sont pas mieux calibrées qu'un 50 % constant.
 
+## Validation externe (jeux ouverts, hors dépôt)
+
+Deux jeux CC BY 4.0, à télécharger depuis Zenodo et à extraire hors du dépôt (`config.yaml` → `external.root`,
+ou `$env:EXTERNAL_DATA_DIR`) : Teng 2025 (images, DOI 10.5281/zenodo.17558630) et Dai 2026 v2 (points MediaPipe,
+DOI 10.5281/zenodo.19550070). Attribution complète : [docs/DATA_LICENSES.md](docs/DATA_LICENSES.md).
+
+```powershell
+python scripts/inspect_external.py      # description des jeux (~10 min la première fois)
+python scripts/evaluate_external.py     # règles figées, protocole committé avant exécution (~8 min)
+```
+
+En bref : les règles détectent les erreurs marquées et mises en scène (dos très penché, squat peu profond). La
+profondeur ne donne que 4,7 % de fausses alertes sur des squats « standard » d'un autre laboratoire (résultat
+concluant, indépendant du format d'image). Mais les effectifs (6 sujets Shallow, ~10 scènes) ne permettent pas de
+conclure sur la détection. Détails et limites : [docs/PIPELINE.md](docs/PIPELINE.md).
+
 ## Documentation
 
 - [docs/PIPELINE.md](docs/PIPELINE.md) : schéma de bout en bout et limites déjà identifiées
@@ -70,4 +86,5 @@ ruff check .
 - [x] Phase 0 : mise en place, indexation du dataset
 - [x] Phase A : pipeline cœur (pose, angles, répétitions, règles)
 - [x] Phase B : évaluation sur données réelles (résultats faibles, voir docs/PIPELINE.md)
+- [x] Validation externe : Teng 2025 et Dai 2026 v2 (protocole figé avant exécution)
 - [ ] Phase C : interface, déploiement

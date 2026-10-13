@@ -310,7 +310,16 @@ for rule_name, rule in rules.items():
             row["evaluated_against"] = "fiabilité non évaluée contre annotation"
         reliability_rows.append(row)
 reliability = pd.DataFrame(reliability_rows)
-reliability.to_csv(RESULTS / "rule_reliability.csv", index=False, float_format="%.3f")
+reliability.insert(3, "provenance",
+                   "Mendeley Data (label vidéo) ; annotation en aveugle de l'auteur (profil)")
+# Les lignes des jeux externes (scripts/evaluate_external.py) sont conservées
+rel_path = RESULTS / "rule_reliability.csv"
+if rel_path.exists():
+    old = pd.read_csv(rel_path)
+    if "provenance" in old:
+        external = old[old["provenance"] != reliability["provenance"].iloc[0]]
+        reliability = pd.concat([reliability, external], ignore_index=True)
+reliability.to_csv(rel_path, index=False, float_format="%.3f")
 print(reliability[["rule", "view", "flag_rate_good", "flag_rate_bad",
                    "evaluated_against"]].to_string(index=False))
 

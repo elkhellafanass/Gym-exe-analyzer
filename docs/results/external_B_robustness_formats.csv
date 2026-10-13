@@ -1,0 +1,23 @@
+rule,analysis,metric,target,conclusion
+depth,(a) par répétition,false_alert,,taux mesuré
+depth,(a) par répétition (principal),balanced_accuracy,Shallow,"indicatif, pas de conclusion"
+depth,(a) par répétition (principal),detection,Shallow,"indicatif, pas de conclusion"
+depth,(a) par répétition (principal),false_alert,Shallow,taux mesuré
+depth,(a) sensibilité : fichier = répétition entière,balanced_accuracy,Shallow,"indicatif, pas de conclusion"
+depth,(a) sensibilité : fichier = répétition entière,detection,Shallow,"indicatif, pas de conclusion"
+depth,(a) sensibilité : fichier = répétition entière,false_alert,Shallow,taux mesuré
+depth,"(b) par (sujet, classe), >= 2 répétitions",balanced_accuracy,Shallow,"indicatif, pas de conclusion"
+depth,"(b) par (sujet, classe), >= 2 répétitions",detection,Shallow,"indicatif, pas de conclusion"
+depth,"(b) par (sujet, classe), >= 2 répétitions",false_alert,Shallow,taux mesuré
+head_position,(a) par répétition,false_alert,,non retenue : dépend du format (0.017 à 0.024)
+heel_rise,(a) par répétition,false_alert,,non retenue : dépend du format (0.351 à 0.666)
+trunk_vs_tibia,(a) par répétition,false_alert,,non retenue : dépend du format (0.088 à 0.443)
+trunk_vs_tibia,(a) par répétition (principal),balanced_accuracy,GM,non retenue : dépend du format (0.779 à 0.956)
+trunk_vs_tibia,(a) par répétition (principal),detection,GM,"descriptif, pas de conclusion"
+trunk_vs_tibia,(a) par répétition (principal),false_alert,GM,non retenue : dépend du format (0.088 à 0.443)
+trunk_vs_tibia,(a) sensibilité : fichier = répétition entière,balanced_accuracy,GM,non retenue : dépend du format (0.767 à 0.951)
+trunk_vs_tibia,(a) sensibilité : fichier = répétition entière,detection,GM,"descriptif, pas de conclusion"
+trunk_vs_tibia,(a) sensibilité : fichier = répétition entière,false_alert,GM,non retenue : dépend du format (0.098 à 0.466)
+trunk_vs_tibia,"(b) par (sujet, classe), >= 2 répétitions",balanced_accuracy,GM,non retenue : dépend du format (0.732 à 0.929)
+trunk_vs_tibia,"(b) par (sujet, classe), >= 2 répétitions",detection,GM,"descriptif, pas de conclusion"
+trunk_vs_tibia,"(b) par (sujet, classe), >= 2 répétitions",false_alert,GM,non retenue : dépend du format (0.143 à 0.536)

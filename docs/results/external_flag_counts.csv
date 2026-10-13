@@ -1,0 +1,43 @@
+cls,n_units,n_measurable,n_non_measurable,n_flagged,n_clusters,flag_rate,dataset,rule,analysis,format
+Bad Back,1322,1260,62,1239,10,0.983,A Teng 2025,trunk_vs_tibia,descriptif,connu
+Bad Heel,1173,1172,1,18,8,0.015,A Teng 2025,trunk_vs_tibia,descriptif,connu
+Good,1311,1311,0,75,9,0.057,A Teng 2025,trunk_vs_tibia,descriptif,connu
+Bad Back,1322,1271,51,1235,10,0.972,A Teng 2025,depth,descriptif,connu
+Bad Heel,1173,1172,1,1000,8,0.853,A Teng 2025,depth,descriptif,connu
+Good,1311,1311,0,963,9,0.735,A Teng 2025,depth,descriptif,connu
+GM,10,10,0,10,1,1.000,B Dai 2026 v2,depth,(a) par répétition,16:9
+Shallow,38,38,0,30,6,0.789,B Dai 2026 v2,depth,(a) par répétition,16:9
+Standard,296,296,0,14,28,0.047,B Dai 2026 v2,depth,(a) par répétition,16:9
+GM,10,10,0,10,1,1.000,B Dai 2026 v2,trunk_vs_tibia,(a) par répétition,16:9
+Shallow,38,33,5,27,6,0.818,B Dai 2026 v2,trunk_vs_tibia,(a) par répétition,16:9
+Standard,296,296,0,131,28,0.443,B Dai 2026 v2,trunk_vs_tibia,(a) par répétition,16:9
+GM,10,10,0,2,1,0.200,B Dai 2026 v2,heel_rise,(a) par répétition,16:9
+Shallow,38,28,10,14,6,0.500,B Dai 2026 v2,heel_rise,(a) par répétition,16:9
+Standard,296,296,0,104,28,0.351,B Dai 2026 v2,heel_rise,(a) par répétition,16:9
+GM,10,10,0,0,1,0.000,B Dai 2026 v2,head_position,(a) par répétition,16:9
+Shallow,38,38,0,0,6,0.000,B Dai 2026 v2,head_position,(a) par répétition,16:9
+Standard,296,296,0,7,28,0.024,B Dai 2026 v2,head_position,(a) par répétition,16:9
+GM,10,10,0,10,1,1.000,B Dai 2026 v2,depth,(a) par répétition,4:3
+Shallow,38,38,0,30,6,0.789,B Dai 2026 v2,depth,(a) par répétition,4:3
+Standard,296,296,0,14,28,0.047,B Dai 2026 v2,depth,(a) par répétition,4:3
+GM,10,10,0,10,1,1.000,B Dai 2026 v2,trunk_vs_tibia,(a) par répétition,4:3
+Shallow,38,33,5,19,6,0.576,B Dai 2026 v2,trunk_vs_tibia,(a) par répétition,4:3
+Standard,296,296,0,75,28,0.253,B Dai 2026 v2,trunk_vs_tibia,(a) par répétition,4:3
+GM,10,10,0,6,1,0.600,B Dai 2026 v2,heel_rise,(a) par répétition,4:3
+Shallow,38,28,10,20,6,0.714,B Dai 2026 v2,heel_rise,(a) par répétition,4:3
+Standard,296,296,0,157,28,0.530,B Dai 2026 v2,heel_rise,(a) par répétition,4:3
+GM,10,10,0,0,1,0.000,B Dai 2026 v2,head_position,(a) par répétition,4:3
+Shallow,38,38,0,0,6,0.000,B Dai 2026 v2,head_position,(a) par répétition,4:3
+Standard,296,296,0,5,28,0.017,B Dai 2026 v2,head_position,(a) par répétition,4:3
+GM,10,10,0,10,1,1.000,B Dai 2026 v2,depth,(a) par répétition,1:1
+Shallow,38,38,0,30,6,0.789,B Dai 2026 v2,depth,(a) par répétition,1:1
+Standard,296,296,0,14,28,0.047,B Dai 2026 v2,depth,(a) par répétition,1:1
+GM,10,10,0,10,1,1.000,B Dai 2026 v2,trunk_vs_tibia,(a) par répétition,1:1
+Shallow,38,33,5,5,6,0.152,B Dai 2026 v2,trunk_vs_tibia,(a) par répétition,1:1
+Standard,296,296,0,26,28,0.088,B Dai 2026 v2,trunk_vs_tibia,(a) par répétition,1:1
+GM,10,10,0,7,1,0.700,B Dai 2026 v2,heel_rise,(a) par répétition,1:1
+Shallow,38,28,10,27,6,0.964,B Dai 2026 v2,heel_rise,(a) par répétition,1:1
+Standard,296,296,0,197,28,0.666,B Dai 2026 v2,heel_rise,(a) par répétition,1:1
+GM,10,10,0,0,1,0.000,B Dai 2026 v2,head_position,(a) par répétition,1:1
+Shallow,38,38,0,0,6,0.000,B Dai 2026 v2,head_position,(a) par répétition,1:1
+Standard,296,296,0,5,28,0.017,B Dai 2026 v2,head_position,(a) par répétition,1:1
