@@ -23,11 +23,15 @@ analyse. Le classifieur entraîné (`models/squat_classifier.joblib`, 4 Ko, aucu
 
 ## Données
 
-Le dataset n'est **pas** inclus dans le dépôt. Indiquez son dossier `squat` dans `config.yaml` ou via une
-variable d'environnement :
+Le dataset n'est **pas** inclus dans le dépôt. Par défaut, `config.yaml` l'attend dans `data/squat/` (chemin
+relatif à la racine du projet ; `data/` n'est jamais versionné). Deux façons de pointer vers le vrai dossier
+`Dataset Exercise Quality-wise\squat` :
+
+- copier ou lier le dossier dans `data/squat/` ;
+- ou, sans rien modifier, définir une variable d'environnement (prioritaire sur `config.yaml`) :
 
 ```powershell
-$env:SQUAT_DATA_DIR = "C:\chemin\vers\Dataset Exercise Quality-wise\squat"
+$env:SQUAT_DATA_DIR = "D:\chemin\vers\Dataset Exercise Quality-wise\squat"
 python scripts/prepare_dataset.py   # -> data/index.csv
 ```
 
@@ -93,8 +97,8 @@ Résultats : `docs/results/` (tableaux) et `docs/figures/` (figures), commentés
 
 ## Validation externe (jeux ouverts, hors dépôt)
 
-Deux jeux CC BY 4.0, à télécharger depuis Zenodo et à extraire hors du dépôt (`config.yaml` → `external.root`,
-ou `$env:EXTERNAL_DATA_DIR`) : Teng 2025 (images, DOI 10.5281/zenodo.17558630) et Dai 2026 v2 (points MediaPipe,
+Deux jeux CC BY 4.0, à télécharger depuis Zenodo et à extraire dans `data/external/` (défaut de
+`config.yaml` → `external.root`, jamais versionné) ou ailleurs avec `$env:EXTERNAL_DATA_DIR = "D:\chemin\vers\extracted"` : Teng 2025 (images, DOI 10.5281/zenodo.17558630) et Dai 2026 v2 (points MediaPipe,
 DOI 10.5281/zenodo.19550070). Attribution complète : [docs/DATA_LICENSES.md](docs/DATA_LICENSES.md).
 
 ```powershell

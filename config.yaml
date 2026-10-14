@@ -9,7 +9,8 @@ app:
   disclaimer: "Outil pédagogique d'aide à l'analyse technique. Ce n'est pas un dispositif médical et il ne prédit aucune blessure."
 
 dataset:
-  # Chemin local du dataset (surchargeable par la variable d'environnement SQUAT_DATA_DIR).
+  # Dossier local du dataset, relatif à la racine du projet (data/ n'est jamais versionné).
+  # Pour pointer ailleurs sans modifier ce fichier : variable d'environnement SQUAT_DATA_DIR.
   squat_dir: "data/squat"
   env_var: "SQUAT_DATA_DIR"
   # Nom de fichier attendu : subject_<ID>_squat_<good|bad>_<front|side|diagonal>.mp4
@@ -155,14 +156,14 @@ evaluation:
   calibration_bins: 5                  # courbe de fiabilité (5 groupes de 30 vidéos)
 
 # ---------------------------------------------------------------------
-# Jeux de données externes (validation externe). Extraits HORS du dépôt,
-# jamais commités. Racine surchargeable par EXTERNAL_DATA_DIR.
+# Jeux de données externes (validation externe). Jamais commités (data/ est
+# ignoré par git). Racine surchargeable par EXTERNAL_DATA_DIR.
 # Attribution complète : docs/DATA_LICENSES.md
 # ---------------------------------------------------------------------
 external:
   root: "data/external"
   env_var: "EXTERNAL_DATA_DIR"
-  # Dossier hors dépôt pour les planches d'inspection (images de personnes)
+  # Planches d'inspection (images de personnes) : dans data/ (ignoré) ou hors du dépôt
   inspection_dir: "data/inspection"
   teng_squat:
     dir: "A_teng_squat"

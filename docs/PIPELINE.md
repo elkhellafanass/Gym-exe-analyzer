@@ -316,9 +316,9 @@ choisissent les données (hanche nettement au-dessus du genou) va dans le sens d
 
 ## Validation externe (faite le 13/10/2026)
 
-Deux jeux ouverts (CC BY 4.0), jamais commités, extraits hors du dépôt (`config.yaml` → `external`).
+Deux jeux ouverts (CC BY 4.0), jamais commités, extraits hors de git (`config.yaml` → `external`).
 Attribution et écarts vérifiés : `docs/DATA_LICENSES.md`. Description : `python scripts/inspect_external.py`
-(sorties dans `outputs/external/`, planches d'images dans `Datasets\extracted\_inspection\`, hors du dépôt).
+(sorties dans `outputs/external/`, planches d'images dans `external.inspection_dir`, par défaut `data/inspection/`, jamais versionné).
 
 ### Étape 2 : compatibilité avec le pipeline (`src/angles.py`, `src/rules.py`)
 

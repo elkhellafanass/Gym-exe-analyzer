@@ -28,7 +28,7 @@ d'images extraites (`docs/inspection/` est dans `.gitignore`). Seules des donné
 
 ## 1 bis. Jeux de données externes (validation externe, inspection faite le 13/10/2026)
 
-Les deux jeux sont extraits **hors du dépôt** (`config.yaml` → `external.root`, surchargeable par
+Les deux jeux sont extraits **hors de git** (`config.yaml` → `external.root`, défaut `data/external/`, surchargeable par
 `EXTERNAL_DATA_DIR`). Ils ne sont jamais commités. Les zip d'origine (conservés hors du dépôt)
 ne sont ni modifiés ni supprimés : leur MD5 est identique à celui publié sur Zenodo, et leur SHA-256 est le même
 avant et après l'extraction. Les métadonnées ci-dessous viennent de l'API Zenodo (`/api/records/<id>`),

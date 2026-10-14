@@ -11,6 +11,8 @@ outputs/
 *.webm
 # Images extraites des vidéos du dataset (inspection) : personnes identifiables
 docs/inspection/
+# Captures de l'application : montrent un sujet du dataset (personne identifiable)
+docs/figures/app_*.png
 
 # --- Modèles téléchargés (MediaPipe .task) et modèles entraînés ---
 models/*.task

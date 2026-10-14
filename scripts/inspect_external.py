@@ -12,7 +12,7 @@ Ce script DÉCRIT seulement : il ne calcule aucune règle, aucun résultat.
 Étapes :
   1) A : dossiers, fichiers par classe, formats, résolutions
   2) A : doublons exacts (même fichier dans train et test ?)
-  3) A : planche de quelques images par classe, enregistrée HORS du dépôt
+  3) A : planche de quelques images par classe, jamais versionnée (data/ ou hors du dépôt)
   4) A : images voisines quasi identiques -> blocs (corrélation)
   5) A : détection MediaPipe par résolution et par classe (aucune règle)
   6) A : phase du mouvement (angle du genou, descriptif)
@@ -40,7 +40,7 @@ from scipy.signal import find_peaks  # noqa: E402
 
 from src.analysis import model_path  # noqa: E402
 from src.angles import angle_3pts  # noqa: E402
-from src.config import external_data_dir, load_config  # noqa: E402
+from src.config import external_data_dir, inspection_dir, load_config  # noqa: E402
 from src.external import ASPECT_GRID, estimate_aspect, length_instability, read_normalized  # noqa: E402
 from src.pose import LM, PoseSeries, extract_pose_images  # noqa: E402
 
@@ -49,9 +49,12 @@ ext = external_data_dir(config)
 A_DIR = ext / config["external"]["teng_squat"]["dir"]
 OUT = ROOT / "outputs" / "external"
 OUT.mkdir(parents=True, exist_ok=True)
-INSPECTION = Path(config["external"]["inspection_dir"])
-# Garde-fou : les images de personnes ne doivent jamais arriver dans le dépôt
-assert ROOT not in INSPECTION.resolve().parents, "la planche doit être hors du dépôt"
+INSPECTION = inspection_dir(config).resolve()
+# Garde-fou : les images de personnes ne doivent jamais être versionnées :
+# hors du dépôt, ou dans data/ (ignoré par .gitignore)
+assert ROOT not in INSPECTION.parents or (ROOT / "data") in INSPECTION.parents, (
+    "la planche doit être hors du dépôt ou dans data/"
+)
 
 
 def md5(path: Path) -> str:

@@ -57,3 +57,23 @@ def test_missing_combinations(tmp_path):
     # 1 sujet x 2 qualités x 3 vues = 6 attendues, 1 présente -> 5 manquantes
     assert len(missing) == 5
     assert ("001", "bad", "front") in missing
+
+
+def test_chemins_config_relatifs_a_la_racine(monkeypatch):
+    """Les chemins par défaut de config.yaml sont relatifs à la racine, jamais personnels."""
+    from src.config import ROOT, external_data_dir, inspection_dir, squat_data_dir
+
+    monkeypatch.delenv("SQUAT_DATA_DIR", raising=False)
+    monkeypatch.delenv("EXTERNAL_DATA_DIR", raising=False)
+    assert squat_data_dir() == ROOT / "data" / "squat"
+    assert external_data_dir() == ROOT / "data" / "external"
+    assert inspection_dir() == ROOT / "data" / "inspection"
+
+
+def test_variables_d_environnement_prioritaires(monkeypatch, tmp_path):
+    from src.config import external_data_dir, squat_data_dir
+
+    monkeypatch.setenv("SQUAT_DATA_DIR", str(tmp_path / "squat"))
+    monkeypatch.setenv("EXTERNAL_DATA_DIR", str(tmp_path / "ext"))
+    assert squat_data_dir() == tmp_path / "squat"
+    assert external_data_dir() == tmp_path / "ext"

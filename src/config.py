@@ -23,6 +23,15 @@ def load_config(path: Path = CONFIG_PATH) -> dict:
         return yaml.safe_load(f)
 
 
+def project_path(value: str | os.PathLike) -> Path:
+    """Chemin de config.yaml : relatif à la racine du projet, absolu tel quel.
+
+    Ainsi le résultat ne dépend pas du dossier depuis lequel on lance le script.
+    """
+    path = Path(value)
+    return path if path.is_absolute() else ROOT / path
+
+
 def squat_data_dir(config: dict | None = None) -> Path:
     """Renvoie le dossier du dataset squat.
 
@@ -31,7 +40,7 @@ def squat_data_dir(config: dict | None = None) -> Path:
     """
     config = config or load_config()
     env_var = config["dataset"]["env_var"]
-    return Path(os.environ.get(env_var) or config["dataset"]["squat_dir"])
+    return project_path(os.environ.get(env_var) or config["dataset"]["squat_dir"])
 
 
 def external_data_dir(config: dict | None = None) -> Path:
@@ -42,4 +51,10 @@ def external_data_dir(config: dict | None = None) -> Path:
     """
     config = config or load_config()
     env_var = config["external"]["env_var"]
-    return Path(os.environ.get(env_var) or config["external"]["root"])
+    return project_path(os.environ.get(env_var) or config["external"]["root"])
+
+
+def inspection_dir(config: dict | None = None) -> Path:
+    """Dossier des planches d'inspection (images de personnes, jamais versionnées)."""
+    config = config or load_config()
+    return project_path(config["external"]["inspection_dir"])
